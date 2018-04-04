@@ -5,19 +5,15 @@
  */
 package geometryclasses;
 
-import java.awt.Choice;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceDialog;
 import sodickdxfcoderui.Utilities;
 
 /**
@@ -27,7 +23,43 @@ import sodickdxfcoderui.Utilities;
 public class GeometryModel {
     
     private ChainList chainList = null;
+
+    private class GeoExtents {
+        Point2D upperLeft;
+        Point2D lowerRight;
+    }
+    
     private enum Action { REPLACE, ADD, CANCEL};
+
+    private GeoExtents getGeoExtents() {
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxX = Double.MIN_VALUE;
+        double maxY = Double.MIN_VALUE;
+        
+        // Find smallest and largest X and Y values
+        for ( Chain chain : chainList ) {
+            for ( GeometricEntity geo : chain ) {
+                minX = Math.min(minX, geo.getX1());
+                minX = Math.min(minX, geo.getX2());
+                minY = Math.min(minY, geo.getY1());
+                minY = Math.min(minY, geo.getY2());
+                maxX = Math.max(maxX, geo.getX1());
+                maxX = Math.max(maxX, geo.getX2());
+                maxY = Math.max(maxY, geo.getY1());
+                maxY = Math.max(maxY, geo.getY2());
+            }
+        }
+        
+        GeoExtents geoExtents = new GeoExtents();
+        geoExtents.upperLeft = new Point2D(minX, maxY);
+        geoExtents.lowerRight = new Point2D(maxX, minY);
+        return geoExtents;
+    }
+    
+    public void plotOnCanvas() {
+        GeoExtents geoExtents = getGeoExtents();
+    }
 
     public void openDxfFile(File fileToOpen) {
         if ( chainList != null ) {

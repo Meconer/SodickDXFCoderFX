@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 
-public class ChainList {
+public class ChainList implements Iterable<Chain>{
 
 
 	ArrayList<Chain> listOfChains;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-public class Chain {
+public class Chain implements Iterable<GeometricEntity>{
 
 	ArrayList<GeometricEntity> entityList;
 	private static final double CHAIN_LINK_DISTANCE = 0.002;
@@ -15,6 +15,9 @@ public class Chain {
 		entityList = new ArrayList<GeometricEntity>();
 	}
 
+	public Iterator<GeometricEntity> iterator() {
+		return entityList.iterator();
+	}
 
 	public boolean isSelected() {
 		return selected;

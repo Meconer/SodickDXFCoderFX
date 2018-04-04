@@ -81,6 +81,7 @@ public class FXMLDocumentController implements Initializable {
             
             // Open the file
             geoModel.openDxfFile(fileToOpen);
+            geoModel.plotOnCanvas();
         }
     }
     
