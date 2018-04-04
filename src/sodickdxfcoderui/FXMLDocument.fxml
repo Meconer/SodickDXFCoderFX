@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane prefHeight="377.0" prefWidth="642.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sodickdxfcoderui.FXMLDocumentController">
+   <center>
+      <Canvas fx:id="canvas" height="683.0" width="847.0" BorderPane.alignment="CENTER" />
+   </center>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Arkiv">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#menuOpenAction" text="Öppna" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuExitAction" text="Avsluta" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Kod">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#menuReverseLinkAction" text="Reversera länk" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuCodeStraightAction" text="Koda rakt snitt" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuCodeAngleAction" text="Koda vinkelsnitt" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuCodeTBAction" text="Koda T/B-snitt" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <left>
+      <ListView prefHeight="683.0" prefWidth="102.0" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <TextArea fx:id="logTextArea" prefHeight="683.0" prefWidth="134.0" BorderPane.alignment="CENTER" />
+   </right>
+   <bottom>
+      <HBox BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="statusLabel" prefHeight="25.0" prefWidth="500.0" text="" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
