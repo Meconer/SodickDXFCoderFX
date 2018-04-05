@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 
@@ -26,6 +27,9 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     private Label statusLabel;
+    
+    @FXML
+    private Canvas canvas;
     
     @FXML
     private void menuOpenAction(ActionEvent event) {
@@ -81,7 +85,7 @@ public class FXMLDocumentController implements Initializable {
             
             // Open the file
             geoModel.openDxfFile(fileToOpen);
-            geoModel.plotOnCanvas();
+            geoModel.plotOnCanvas(canvas);
         }
     }
     

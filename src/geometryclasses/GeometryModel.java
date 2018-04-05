@@ -12,8 +12,10 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.transform.Scale;
 import sodickdxfcoderui.Utilities;
 
 /**
@@ -24,41 +26,38 @@ public class GeometryModel {
     
     private ChainList chainList = null;
 
-    private class GeoExtents {
-        Point2D upperLeft;
-        Point2D lowerRight;
-    }
     
     private enum Action { REPLACE, ADD, CANCEL};
 
-    private GeoExtents getGeoExtents() {
-        double minX = Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE;
-        double maxY = Double.MIN_VALUE;
+    public void plotOnCanvas(Canvas canvas) {
+        GeoExtents geoExtents = new GeoExtents();
+        geoExtents.calcGeoExtentsFromChainList(chainList);
         
-        // Find smallest and largest X and Y values
+        System.out.println("upperLeft : " + geoExtents.getUpperLeft());
+        System.out.println("lowerRight : " + geoExtents.getLowerRight());
+        double viewPortWidth = canvas.getWidth();
+        double viewPortHeight = canvas.getHeight();
+        double yScale = viewPortHeight / geoExtents.getHeight();
+        double xScale = viewPortWidth / geoExtents.getWidth();
+        
+        double scale = 0.5 * Math.min(xScale, yScale);
+        
+        /*canvas.getGraphicsContext2D().clearRect(
+                geoExtents.getLowerRight().getX(),
+                geoExtents.getLowerRight().getY(),
+                geoExtents.getWidth(),
+                geoExtents.getHeight());*/
+        
+        canvas.getGraphicsContext2D().scale(scale, -scale);
+        canvas.getGraphicsContext2D().translate(-geoExtents.getUpperLeft().getX()*1.5, -geoExtents.getUpperLeft().getY()*1.5);
+        canvas.getGraphicsContext2D().setLineWidth( 2/scale);
+        
         for ( Chain chain : chainList ) {
-            for ( GeometricEntity geo : chain ) {
-                minX = Math.min(minX, geo.getX1());
-                minX = Math.min(minX, geo.getX2());
-                minY = Math.min(minY, geo.getY1());
-                minY = Math.min(minY, geo.getY2());
-                maxX = Math.max(maxX, geo.getX1());
-                maxX = Math.max(maxX, geo.getX2());
-                maxY = Math.max(maxY, geo.getY1());
-                maxY = Math.max(maxY, geo.getY2());
+            for (SDCGeometricEntity geoEntity : chain ) {
+                geoEntity.drawOnCanvas( canvas );
             }
         }
         
-        GeoExtents geoExtents = new GeoExtents();
-        geoExtents.upperLeft = new Point2D(minX, maxY);
-        geoExtents.lowerRight = new Point2D(maxX, minY);
-        return geoExtents;
-    }
-    
-    public void plotOnCanvas() {
-        GeoExtents geoExtents = getGeoExtents();
     }
 
     public void openDxfFile(File fileToOpen) {
@@ -67,6 +66,7 @@ public class GeometryModel {
             if ( action == Action.CANCEL ) return;
             if ( action == Action.REPLACE ) chainList = new ChainList();
         } else {
+            // Chainlist is empty. We need to make a new.
             chainList = new ChainList();
         }
         
@@ -95,5 +95,4 @@ public class GeometryModel {
         if ( result.get() == cancelButton ) return Action.CANCEL;
         return Action.CANCEL;
     }
-    
 }

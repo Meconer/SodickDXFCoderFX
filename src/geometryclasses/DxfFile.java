@@ -142,7 +142,7 @@ class DxfFile {
     }
 
     Iterator<String> dxfStringListIterator;
-    public GeometricEntity getFirstGeometricEntity() {
+    public SDCGeometricEntity getFirstGeometricEntity() {
         dxfStringListIterator = dxfStringList.iterator();
         
         // Search to ENTITIES section in dxf lines.
@@ -154,15 +154,15 @@ class DxfFile {
         return getNextGeometricEntity();
     }
 
-    public GeometricEntity getNextGeometricEntity() {
+    public SDCGeometricEntity getNextGeometricEntity() {
         String result = findInDxfStringList("ARC|LINE");
         if ( result == null ) return null;
         if (result.matches("LINE")) {
-            Line line = readLineFromDxf( );
+            SDCLine line = readLineFromDxf( );
             return line;
         }
         if (result.matches("ARC")) {
-            Arc arc = readArcFromDxf( );
+            SDCArc arc = readArcFromDxf( );
             return arc;
         }
         return null;
@@ -177,7 +177,7 @@ class DxfFile {
         return null; // Not found
     }
 
-    private Line readLineFromDxf() {
+    private SDCLine readLineFromDxf() {
         String inLine1;
         String inLine2;
         double x1 = 0, x2 = 0, y1 = 0, y2 = 0;
@@ -199,7 +199,7 @@ class DxfFile {
                 y2 = Double.parseDouble(inLine2);
             }
         } while (!inLine1.matches(" 21"));
-        Line l = new Line(x1, y1, x2, y2);
+        SDCLine l = new SDCLine(x1, y1, x2, y2);
         NumberFormat nf = new DecimalFormat("#.###");
         System.out.println("Line " + nf.format(l.getX1()) + ":"
                 + nf.format(l.getY1()) + " ; "
@@ -208,7 +208,7 @@ class DxfFile {
         return l;
     }
 
-    private Arc readArcFromDxf() {
+    private SDCArc readArcFromDxf() {
         String inLine1;
         String inLine2;
 
@@ -240,7 +240,7 @@ class DxfFile {
         if (endA < stA) {
             endA += 360.0;
         }
-        Arc a = new Arc(xC, yC, r, stA, endA - stA);
+        SDCArc a = new SDCArc(xC, yC, r, stA, endA - stA);
         NumberFormat nf = new DecimalFormat("#.###");
         System.out.println("Arc " + nf.format(a.getX1()) + ":"
                 + nf.format(a.getY1()) + " ; "

@@ -5,17 +5,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-public class Chain implements Iterable<GeometricEntity>{
+public class Chain implements Iterable<SDCGeometricEntity>{
 
-	ArrayList<GeometricEntity> entityList;
+	ArrayList<SDCGeometricEntity> entityList;
 	private static final double CHAIN_LINK_DISTANCE = 0.002;
 	private boolean selected = false;
 
 	public Chain() {
-		entityList = new ArrayList<GeometricEntity>();
+		entityList = new ArrayList<SDCGeometricEntity>();
 	}
 
-	public Iterator<GeometricEntity> iterator() {
+	public Iterator<SDCGeometricEntity> iterator() {
 		return entityList.iterator();
 	}
 
@@ -46,7 +46,7 @@ public class Chain implements Iterable<GeometricEntity>{
 	}
 
 	
-	public boolean add(GeometricEntity geo) {
+	public boolean add(SDCGeometricEntity geo) {
 		// Get end points of line
 		double geoX1 = geo.getX1();
 		double geoY1 = geo.getY1();
@@ -150,18 +150,18 @@ public class Chain implements Iterable<GeometricEntity>{
 	 * Adds supplied chain to this chain
 	 */
 	private void addChain(Chain chainToAdd) {
-		Iterator<GeometricEntity> chIter = chainToAdd.entityList.iterator();
+		Iterator<SDCGeometricEntity> chIter = chainToAdd.entityList.iterator();
 		while (chIter.hasNext()) {
-			GeometricEntity geo = chIter.next();
+			SDCGeometricEntity geo = chIter.next();
 			entityList.add(geo);
 		}
 	}
 
 	public void reverseChain() {
 		Chain newChain = new Chain();
-		ListIterator<GeometricEntity> geoIter = entityList.listIterator(entityList.size());
+		ListIterator<SDCGeometricEntity> geoIter = entityList.listIterator(entityList.size());
 		while (geoIter.hasPrevious()) {
-			GeometricEntity geo = geoIter.previous(); // Get last entity
+			SDCGeometricEntity geo = geoIter.previous(); // Get last entity
 			geo.reverse();
 			newChain.entityList.add(geo);
 		}
