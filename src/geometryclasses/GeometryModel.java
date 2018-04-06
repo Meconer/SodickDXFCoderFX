@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.transform.Scale;
@@ -40,21 +41,16 @@ public class GeometryModel {
         double yScale = viewPortHeight / geoExtents.getHeight();
         double xScale = viewPortWidth / geoExtents.getWidth();
         
-        double scale = 0.5 * Math.min(xScale, yScale);
+        canvas.getGraphicsContext2D().clearRect(0, 0, viewPortWidth, viewPortHeight);
         
-        /*canvas.getGraphicsContext2D().clearRect(
-                geoExtents.getLowerRight().getX(),
-                geoExtents.getLowerRight().getY(),
-                geoExtents.getWidth(),
-                geoExtents.getHeight());*/
-        
-        canvas.getGraphicsContext2D().scale(scale, -scale);
-        canvas.getGraphicsContext2D().translate(-geoExtents.getUpperLeft().getX()*1.5, -geoExtents.getUpperLeft().getY()*1.5);
-        canvas.getGraphicsContext2D().setLineWidth( 2/scale);
+        double scale = 0.8 * Math.min(xScale, yScale);
+        double translateX = -geoExtents.getUpperLeft().getX() + 0.1 * geoExtents.getWidth();
+        double translateY = geoExtents.getLowerRight().getY() - 0.1 * geoExtents.getHeight();
+        SDCTransform sdcTransform = new SDCTransform( scale, translateX, translateY );
         
         for ( Chain chain : chainList ) {
             for (SDCGeometricEntity geoEntity : chain ) {
-                geoEntity.drawOnCanvas( canvas );
+                geoEntity.drawOnCanvas(canvas, sdcTransform );
             }
         }
         

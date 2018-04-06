@@ -3,6 +3,7 @@ package geometryclasses;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 
 public abstract class SDCGeometricEntity {
 
@@ -12,7 +13,7 @@ public abstract class SDCGeometricEntity {
 	GeometryType geometryType;
 
 	public abstract void draw(Graphics2D gr, float lineWidth, Color c);
-        public abstract void drawOnCanvas(Canvas canvas);
+        public abstract void drawOnCanvas(Canvas canvas, SDCTransform sDCTransform);
 	public abstract double getX1();
 	public abstract double getY1();
 	public abstract double getX2();

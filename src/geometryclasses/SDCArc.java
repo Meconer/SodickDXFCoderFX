@@ -3,6 +3,7 @@ package geometryclasses;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 
@@ -60,8 +61,12 @@ public class SDCArc extends SDCGeometricEntity {
     }
 
     @Override
-    public void drawOnCanvas(Canvas canvas) {
-        canvas.getGraphicsContext2D().strokeArc(xCenter - radius, yCenter - radius, radius*2, radius*2, stAng + 180, angExt, ArcType.OPEN);
+    public void drawOnCanvas(Canvas canvas, SDCTransform sdct) {
+        double x = sdct.scaleAndTranslateX(xCenter - radius );
+        double w = sdct.scale(radius * 2);
+        double h = w;
+        double y = sdct.scaleAndTranslateY(yCenter + radius );
+        canvas.getGraphicsContext2D().strokeArc(x, y, w, h, stAng, angExt, ArcType.OPEN);
     }
 
 }
