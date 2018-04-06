@@ -16,6 +16,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.transform.Scale;
 import sodickdxfcoderui.Utilities;
 
@@ -38,21 +40,34 @@ public class GeometryModel {
         System.out.println("lowerRight : " + geoExtents.getLowerRight());
         double viewPortWidth = canvas.getWidth();
         double viewPortHeight = canvas.getHeight();
+
+        canvas.getGraphicsContext2D().clearRect(0, 0, viewPortWidth, viewPortHeight);
+
         double yScale = viewPortHeight / geoExtents.getHeight();
         double xScale = viewPortWidth / geoExtents.getWidth();
         
-        canvas.getGraphicsContext2D().clearRect(0, 0, viewPortWidth, viewPortHeight);
-        
         double scale = 0.8 * Math.min(xScale, yScale);
+
         double translateX = -geoExtents.getUpperLeft().getX() + 0.1 * geoExtents.getWidth();
-        double translateY = geoExtents.getLowerRight().getY() - 0.1 * geoExtents.getHeight();
+        double translateY = -geoExtents.getUpperLeft().getY() - 0.1 * geoExtents.getHeight();
+
         SDCTransform sdcTransform = new SDCTransform( scale, translateX, translateY );
         
         for ( Chain chain : chainList ) {
+            canvas.getGraphicsContext2D().setStroke(Color.RED);
             for (SDCGeometricEntity geoEntity : chain ) {
                 geoEntity.drawOnCanvas(canvas, sdcTransform );
+                canvas.getGraphicsContext2D().setStroke(Color.GREEN);
             }
         }
+        
+        SDCLine xAxis = new SDCLine(-10, 0, 10, 0);
+        SDCLine yAxis = new SDCLine(0, -10, 0, 10);
+        canvas.getGraphicsContext2D().setStroke(Color.GRAY);
+        canvas.getGraphicsContext2D().setLineDashes(3);
+        xAxis.drawOnCanvas(canvas, sdcTransform);
+        yAxis.drawOnCanvas(canvas, sdcTransform);
+        canvas.getGraphicsContext2D().setLineDashes(0);
         
     }
 
