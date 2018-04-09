@@ -59,4 +59,10 @@ class GeoExtents {
         return lowerRight.getX() - upperLeft.getX();
     }
     
+    public Point2D getMidpoint(){
+        double midX = (upperLeft.getX() + lowerRight.getX() ) /2;
+        double midY = (upperLeft.getY() + lowerRight.getY() ) /2;
+        return new Point2D(midX, midY);
+    }
+    
 }

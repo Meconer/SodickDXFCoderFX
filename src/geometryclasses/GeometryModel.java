@@ -49,8 +49,10 @@ public class GeometryModel {
 
         double scale = 0.8 * Math.min(xScale, yScale);
 
-        double translateX = -geoExtents.getUpperLeft().getX() + 0.1 * geoExtents.getWidth();
-        double translateY = -geoExtents.getUpperLeft().getY() - 0.1 * geoExtents.getHeight();
+        double translateX = geoExtents.getMidpoint().getX() + geoExtents.getWidth()*0.5*xScale/scale;
+        double translateY = -geoExtents.getMidpoint().getY() - geoExtents.getHeight()*0.5*yScale/scale;
+        System.out.println("translateX " + translateX);
+        System.out.println("translateY " + translateY);
 
         SDCTransform sdcTransform = new SDCTransform(scale, translateX, translateY);
 
