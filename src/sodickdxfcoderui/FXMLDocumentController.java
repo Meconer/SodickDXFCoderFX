@@ -9,12 +9,19 @@ import geometryclasses.GeometryModel;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.DepthTest;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
 
 /**
@@ -34,7 +41,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void menuOpenAction(ActionEvent event) {
         System.out.println("Menu Open");
-        openDxfFile();
+        userOpenDxfFile();
     }
     
     @FXML
@@ -65,9 +72,32 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         statusLabel.setText("");
+        canvas.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                if ( event.getDragboard().hasFiles()) {
+                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+            }
+        });
+        
+        canvas.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard dragboard = event.getDragboard();
+                if ( dragboard.hasFiles() ) {
+                    List<File> droppedFileList = dragboard.getFiles();
+                    File fileToDrop = droppedFileList.get(0);
+                    System.out.println("fileToDrop " + fileToDrop.getAbsolutePath());
+                    Path pathToDropFile = Paths.get(fileToDrop.getAbsolutePath());
+                    openDXFFile(fileToDrop);
+                }
+            }
+        });
+        
     }    
 
-    private void openDxfFile() {
+    private void userOpenDxfFile() {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("DXF-filer", "*.dxf"));
@@ -75,18 +105,23 @@ public class FXMLDocumentController implements Initializable {
         fc.setInitialDirectory(initialDirectory);
         File fileToOpen = fc.showOpenDialog(null);
         if ( fileToOpen != null ) {
-            // If a file is chosen, store the directory in preferences so the
-            // same directory is used for next fileOpen
-        
-            Path chosenDirectory = fileToOpen.toPath().getParent();
-            String chosenDirectoryString = chosenDirectory.toString();
-            System.out.println("chosenDirectoryString: " + chosenDirectoryString);
-            SodickDxfCoderPreferences.getInstance().setDefaultDirectory(chosenDirectory.toString());
-            
-            // Open the file
-            geoModel.openDxfFile(fileToOpen);
-            geoModel.plotOnCanvas(canvas);
+            openDXFFile(fileToOpen);
         }
+    }
+
+    private void openDXFFile(File fileToOpen) {
+        // If a file is chosen, store the directory in preferences so the
+        // same directory is used for next fileOpen
+        
+        Path chosenDirectory = fileToOpen.toPath().getParent();
+        String chosenDirectoryString = chosenDirectory.toString();
+        System.out.println("chosenDirectoryString: " + chosenDirectoryString);
+        SodickDxfCoderPreferences.getInstance().setDefaultDirectory(chosenDirectory.toString());
+        
+        // Open the file
+        if ( geoModel.openDxfFile(fileToOpen) ) {
+            geoModel.plotOnCanvas(canvas);
+        } 
     }
     
 }
