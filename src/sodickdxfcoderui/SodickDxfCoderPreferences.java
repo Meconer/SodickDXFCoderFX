@@ -18,7 +18,13 @@ public class SodickDxfCoderPreferences {
 
     private final String DEFAULT_DIRECTORY = "J:\\NCDOK";
     private final String DEFAULT_DIRECTORY_KEY = "DefaultDirectory";
+
+    private final double DEFAULT_EXTRA_SPACE_IN_VIEWPORT = 1.3; // 30% extra space around geometry in viewport
+    private final String DEFAULT_EXTRA_SPACE_IN_VIEWPORT_KEY = "DefaultExtraSpaceInViewport";
+    
+    
     private String defaultDirectory;
+    private double extraSpaceInViewport;
 
     protected SodickDxfCoderPreferences() {
         initPrefs();
@@ -33,6 +39,7 @@ public class SodickDxfCoderPreferences {
 
     private void initPrefs() {
         defaultDirectory = prefs.get(DEFAULT_DIRECTORY_KEY, DEFAULT_DIRECTORY);
+        extraSpaceInViewport = prefs.getDouble(DEFAULT_EXTRA_SPACE_IN_VIEWPORT_KEY, DEFAULT_EXTRA_SPACE_IN_VIEWPORT);
     }
 
     public String getDefaultDirectory() {
@@ -42,6 +49,15 @@ public class SodickDxfCoderPreferences {
     public void setDefaultDirectory(String defaultDirectory) {
         this.defaultDirectory = defaultDirectory;
         prefs.put(DEFAULT_DIRECTORY_KEY, defaultDirectory);
+    }
+
+    public double getExtraSpaceInViewport() {
+        return extraSpaceInViewport;
+    }
+
+    public void setExtraSpaceInViewport(double extraSpaceInViewport) {
+        this.extraSpaceInViewport = extraSpaceInViewport;
+        prefs.putDouble(DEFAULT_EXTRA_SPACE_IN_VIEWPORT_KEY, extraSpaceInViewport);
     }
 
 }

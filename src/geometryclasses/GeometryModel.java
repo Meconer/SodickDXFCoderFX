@@ -11,14 +11,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.transform.Scale;
 import sodickdxfcoderui.Utilities;
 
 /**
@@ -37,8 +33,6 @@ public class GeometryModel {
         GeoExtents geoExtents = new GeoExtents();
         geoExtents.calcGeoExtentsFromChainList(chainList);
 
-        System.out.println("upperLeft : " + geoExtents.getUpperLeft());
-        System.out.println("lowerRight : " + geoExtents.getLowerRight());
         double viewPortWidth = canvas.getWidth();
         double viewPortHeight = canvas.getHeight();
 
@@ -47,12 +41,11 @@ public class GeometryModel {
         double yScale = viewPortHeight / geoExtents.getHeight();
         double xScale = viewPortWidth / geoExtents.getWidth();
 
-        double scale = 0.8 * Math.min(xScale, yScale);
+        double extraSpaceInViewport = sodickdxfcoderui.SodickDxfCoderPreferences.getInstance().getExtraSpaceInViewport();
+        double scale = Math.min(xScale, yScale) / extraSpaceInViewport;
 
-        double translateX = geoExtents.getMidpoint().getX() + geoExtents.getWidth()*0.5*xScale/scale;
-        double translateY = -geoExtents.getMidpoint().getY() - geoExtents.getHeight()*0.5*yScale/scale;
-        System.out.println("translateX " + translateX);
-        System.out.println("translateY " + translateY);
+        double translateX = -geoExtents.getMidpoint().getX() + viewPortWidth / scale / 2;
+        double translateY = -geoExtents.getMidpoint().getY() - viewPortHeight / scale / 2;
 
         SDCTransform sdcTransform = new SDCTransform(scale, translateX, translateY);
 
