@@ -38,8 +38,8 @@ public class GeometryModel {
 
         canvas.getGraphicsContext2D().clearRect(0, 0, viewPortWidth, viewPortHeight);
 
-        double yScale = viewPortHeight / geoExtents.getHeight();
-        double xScale = viewPortWidth / geoExtents.getWidth();
+        double yScale = viewPortHeight / geoExtents.getHeightWithOriginIncluded();
+        double xScale = viewPortWidth / geoExtents.getWidthWithOriginIncluded();
 
         double extraSpaceInViewport = sodickdxfcoderui.SodickDxfCoderPreferences.getInstance().getExtraSpaceInViewport();
         double scale = Math.min(xScale, yScale) / extraSpaceInViewport;

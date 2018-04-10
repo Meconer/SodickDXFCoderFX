@@ -64,5 +64,17 @@ class GeoExtents {
         double midY = (upperLeft.getY() + lowerRight.getY() ) /2;
         return new Point2D(midX, midY);
     }
+
+    double getWidthWithOriginIncluded() {
+        double xLeft = Math.min(0, upperLeft.getX());
+        double xRight = Math.max(0, lowerRight.getX());
+        return xRight - xLeft;
+    }
+
+    double getHeightWithOriginIncluded() {
+        double yUpper = Math.max(0, upperLeft.getY());
+        double yLower = Math.min(0, lowerRight.getY());
+        return yUpper - yLower;
+    }
     
 }
