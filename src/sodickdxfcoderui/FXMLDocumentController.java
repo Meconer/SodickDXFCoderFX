@@ -12,6 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -56,6 +59,12 @@ public class FXMLDocumentController implements Initializable {
     }
     
     @FXML
+    private void menuRedraw(ActionEvent event) {
+        System.out.println("Menu Reverse Link");
+        redraw();
+    }
+    
+    @FXML
     private void menuCodeStraightAction(ActionEvent event) {
         System.out.println("Menu Code Straight");
     }
@@ -73,6 +82,13 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         statusLabel.setText("");
+        
+        setupGraphicPaneDragDrop();
+        
+        setupResizeHandler();
+    }    
+
+    private void setupGraphicPaneDragDrop() {
         pane.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
@@ -95,7 +111,6 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         });
-        
     }    
 
     private void userOpenDxfFile() {
@@ -124,5 +139,25 @@ public class FXMLDocumentController implements Initializable {
             geoModel.plotOnPane(pane);
         } 
     }
+
+    private void redraw() {
+        geoModel.plotOnPane(pane);
+    }
+
+    private void setupResizeHandler() {
+        pane.widthProperty().addListener( resizeListener());
+       
+        pane.heightProperty().addListener(resizeListener());
+    }
+    
+    private InvalidationListener resizeListener() {
+        return (Observable observable) -> {
+            Platform.runLater(() -> {
+                geoModel.plotOnPane(pane);
+            });
+        };
+    }
+
+
     
 }

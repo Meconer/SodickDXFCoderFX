@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -21,15 +20,19 @@
                   <MenuItem mnemonicParsing="false" onAction="#menuExitAction" text="Avsluta" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Kod">
+          <Menu mnemonicParsing="false" text="Verktyg">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#menuReverseLinkAction" text="Reversera länk" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuRedraw" text="Rita om" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Kod">
+               <items>
                   <MenuItem mnemonicParsing="false" onAction="#menuCodeStraightAction" text="Koda rakt snitt" />
                   <MenuItem mnemonicParsing="false" onAction="#menuCodeAngleAction" text="Koda vinkelsnitt" />
                   <MenuItem mnemonicParsing="false" onAction="#menuCodeTBAction" text="Koda T/B-snitt" />
-            </items>
-          </Menu>
+               </items>
+            </Menu>
         </menus>
       </MenuBar>
    </top>
