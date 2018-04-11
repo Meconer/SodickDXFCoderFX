@@ -19,7 +19,7 @@ public class SodickDxfCoderPreferences {
     private final String DEFAULT_DIRECTORY = "J:\\NCDOK";
     private final String DEFAULT_DIRECTORY_KEY = "DefaultDirectory";
 
-    private final double DEFAULT_EXTRA_SPACE_IN_VIEWPORT = 1.0; // 5% extra space around geometry in viewport
+    private final double DEFAULT_EXTRA_SPACE_IN_VIEWPORT = 1.1; // 10% extra space around geometry in viewport
     private final String DEFAULT_EXTRA_SPACE_IN_VIEWPORT_KEY = "DefaultExtraSpaceInViewport";
     
     

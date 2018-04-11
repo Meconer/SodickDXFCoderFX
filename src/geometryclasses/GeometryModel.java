@@ -14,6 +14,7 @@ import java.util.Optional;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import sodickdxfcoderui.Utilities;
 
@@ -29,23 +30,30 @@ public class GeometryModel {
         REPLACE, ADD, CANCEL
     };
 
-    public void plotOnCanvas(Canvas canvas) {
+    public void plotOnPane(Pane pane) {
         GeoExtents geoExtents = new GeoExtents();
         geoExtents.calcGeoExtentsFromChainList(chainList);
 
-        double viewPortWidth = canvas.getWidth();
-        double viewPortHeight = canvas.getHeight();
+        double viewPortWidth = pane.getWidth();
+        double viewPortHeight = pane.getHeight();
 
+        while ( pane.getChildren().size() > 0 ) {
+            pane.getChildren().remove(0);
+        }
+        Canvas canvas = new Canvas(viewPortWidth, viewPortHeight);
+        pane.getChildren().add(canvas);
         canvas.getGraphicsContext2D().clearRect(0, 0, viewPortWidth, viewPortHeight);
 
-        double yScale = viewPortHeight / geoExtents.getHeightWithOriginIncluded();
-        double xScale = viewPortWidth / geoExtents.getWidthWithOriginIncluded();
+        double geoHeight = geoExtents.getHeightWithOriginIncluded();
+        double geoWidth = geoExtents.getWidthWithOriginIncluded();
+        double yScale = viewPortHeight / geoHeight;
+        double xScale = viewPortWidth / geoWidth;
 
         double extraSpaceInViewport = sodickdxfcoderui.SodickDxfCoderPreferences.getInstance().getExtraSpaceInViewport();
         double scale = Math.min(xScale, yScale) / extraSpaceInViewport;
 
-        double translateX = -geoExtents.getMidpoint().getX() + viewPortWidth / scale / 2;
-        double translateY = -geoExtents.getMidpoint().getY() - viewPortHeight / scale / 2;
+        double translateX = -geoExtents.getMidpointWithOriginIncluded().getX() + viewPortWidth / scale / 2;
+        double translateY = -geoExtents.getMidpointWithOriginIncluded().getY() - viewPortHeight / scale / 2;
 
         SDCTransform sdcTransform = new SDCTransform(scale, translateX, translateY);
 

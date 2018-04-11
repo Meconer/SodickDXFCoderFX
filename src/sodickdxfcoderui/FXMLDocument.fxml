@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -10,11 +9,9 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 
-<BorderPane prefHeight="377.0" prefWidth="642.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sodickdxfcoderui.FXMLDocumentController">
-   <center>
-      <Canvas fx:id="canvas" height="683.0" width="847.0" BorderPane.alignment="CENTER" />
-   </center>
+<BorderPane prefHeight="716.0" prefWidth="1019.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sodickdxfcoderui.FXMLDocumentController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -49,4 +46,7 @@
          </children>
       </HBox>
    </bottom>
+   <center>
+      <Pane fx:id="pane" prefHeight="413.0" prefWidth="539.0" BorderPane.alignment="CENTER" />
+   </center>
 </BorderPane>

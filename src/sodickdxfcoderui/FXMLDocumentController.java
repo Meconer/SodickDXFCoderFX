@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 /**
@@ -36,7 +37,7 @@ public class FXMLDocumentController implements Initializable {
     private Label statusLabel;
     
     @FXML
-    private Canvas canvas;
+    private Pane pane;
     
     @FXML
     private void menuOpenAction(ActionEvent event) {
@@ -72,7 +73,7 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         statusLabel.setText("");
-        canvas.setOnDragOver(new EventHandler<DragEvent>() {
+        pane.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
                 if ( event.getDragboard().hasFiles()) {
@@ -81,7 +82,7 @@ public class FXMLDocumentController implements Initializable {
             }
         });
         
-        canvas.setOnDragDropped(new EventHandler<DragEvent>() {
+        pane.setOnDragDropped(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
                 Dragboard dragboard = event.getDragboard();
@@ -120,7 +121,7 @@ public class FXMLDocumentController implements Initializable {
         
         // Open the file
         if ( geoModel.openDxfFile(fileToOpen) ) {
-            geoModel.plotOnCanvas(canvas);
+            geoModel.plotOnPane(pane);
         } 
     }
     
