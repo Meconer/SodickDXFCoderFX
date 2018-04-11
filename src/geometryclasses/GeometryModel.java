@@ -25,39 +25,39 @@ import sodickdxfcoderui.Utilities;
 public class GeometryModel {
 
     private ChainList chainList = null;
+    private SDCTransform sdcTransform;
+
+    public void changeZoomLevel(double zoom, Pane pane) {
+        sdcTransform.setZoomLevel( zoom );
+        plotOnPane(pane);
+    }
+
+    public void setZoomCenterInViewportCoords(double zoomCenterX, double zoomCenterY, Pane pane) {
+        sdcTransform.setZoomCenterInViewportCoords( zoomCenterX, zoomCenterY, pane.getWidth(), pane.getHeight() );
+    }
 
     private enum Action {
         REPLACE, ADD, CANCEL
     };
 
-    public void plotOnPane(Pane pane) {
+    public void setInitialScale(Pane pane) {
         GeoExtents geoExtents = new GeoExtents();
         geoExtents.calcGeoExtentsFromChainList(chainList);
 
         double viewPortWidth = pane.getWidth();
         double viewPortHeight = pane.getHeight();
 
+        sdcTransform = SDCTransform.buildScaleTransform(geoExtents, viewPortWidth, viewPortHeight);
+    }
+
+    public void plotOnPane(Pane pane) {
+
         while (pane.getChildren().size() > 0) {
             pane.getChildren().remove(0);
         }
-        Canvas canvas = new Canvas(viewPortWidth, viewPortHeight);
-        pane.getChildren().add(canvas);
-        canvas.getGraphicsContext2D().clearRect(0, 0, viewPortWidth, viewPortHeight);
-
-        double geoHeight = geoExtents.getHeightWithOriginIncluded();
-        double geoWidth = geoExtents.getWidthWithOriginIncluded();
-        double yScale = viewPortHeight / geoHeight;
-        double xScale = viewPortWidth / geoWidth;
-
-        double extraSpaceInViewport = sodickdxfcoderui.SodickDxfCoderPreferences.getInstance().getExtraSpaceInViewport();
-        double scale = Math.min(xScale, yScale) / extraSpaceInViewport;
-
-        double translateX = -geoExtents.getMidpointWithOriginIncluded().getX() + viewPortWidth / scale / 2;
-        double translateY = -geoExtents.getMidpointWithOriginIncluded().getY() - viewPortHeight / scale / 2;
-
-        SDCTransform sdcTransform = new SDCTransform(scale, translateX, translateY);
-
+        Canvas canvas = new Canvas(pane.getWidth(), pane.getHeight());
         canvas.getGraphicsContext2D().setLineWidth(2.0);
+        pane.getChildren().add(canvas);
         if (chainList != null) {
             for (Chain chain : chainList) {
                 canvas.getGraphicsContext2D().setStroke(Color.RED);
