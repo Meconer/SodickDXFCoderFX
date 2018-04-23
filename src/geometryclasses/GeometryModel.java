@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -32,8 +33,12 @@ public class GeometryModel {
         plotOnPane(pane);
     }
 
-    public void setZoomCenterInViewportCoords(double zoomCenterX, double zoomCenterY, Pane pane) {
-        sdcTransform.setZoomCenterInViewportCoords( zoomCenterX, zoomCenterY, pane.getWidth(), pane.getHeight() );
+    public void setZoomCenterInViewportCoords(double zoomCenterX, double zoomCenterY) {
+        sdcTransform.setZoomCenterInViewportCoords( zoomCenterX, zoomCenterY );
+    }
+
+    public Point2D getModelCoordsFromViewpointCoords(Point2D viewportPoint) {
+        return sdcTransform.modelCoordsFromViewportCoords(viewportPoint);
     }
 
     private enum Action {

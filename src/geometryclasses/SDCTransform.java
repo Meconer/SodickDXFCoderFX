@@ -5,6 +5,8 @@
  */
 package geometryclasses;
 
+import javafx.geometry.Point2D;
+
 /**
  *
  * @author matsandersson
@@ -12,16 +14,15 @@ package geometryclasses;
 class SDCTransform {
 
     private double scale;
-    private double translateX;
-    private double translateY;
-    private double zoomLevel = 1.0;
-    private double zoomCenterX = 0.0;
-    private double zoomCenterY = 0.0;
+    private Point2D translate;
+    private double zoomLevel;
+    private Point2D zoomCenter;
 
-    public SDCTransform(double scale, double translateX, double translateY) {
+    public SDCTransform(double scale, Point2D translate) {
         this.scale = scale;
-        this.translateX = translateX;
-        this.translateY = translateY;
+        this.translate = translate;
+        zoomCenter = new Point2D(0, 0);
+        zoomLevel = 1.0;
     }
 
     public double getScale() {
@@ -32,34 +33,40 @@ class SDCTransform {
         this.scale = scale;
     }
 
-    public double getTranslateX() {
-        return translateX;
+    public Point2D getTranslate() {
+        return translate;
     }
 
-    public void setTranslateX(double translateX) {
-        this.translateX = translateX;
+    public void setTranslate( Point2D translate ) {
+        this.translate = translate;
     }
 
-    public double getTranslateY() {
-        return translateY;
-    }
-
-    public void setTranslateY(double translateY) {
-        this.translateY = translateY;
-    }
-
-    double scaleAndTranslateX(double x) {
-        double zoomTranslationX = (x - zoomCenterX)*zoomLevel;
-        return ( x + translateX + zoomTranslationX ) * scale;
+    public Point2D viewportCoordsFromModelCoords(Point2D modelCoords) {
+        Point2D viewportCoords = new Point2D(
+                scaleModelToViewport( modelCoords.getX() + translate.getX() ),
+                -scaleModelToViewport( modelCoords.getY() + translate.getY()));
+                
+        return viewportCoords;
     }
     
-    double scaleAndTranslateY(double y) {
-        double zoomTranslationY = (y - zoomCenterY)*zoomLevel;
-        return -(y + translateY + zoomTranslationY)* scale ;
+    public Point2D modelCoordsFromViewportCoords( Point2D viewportPoint ) {
+        Point2D modelPoint = new Point2D(
+                scaleViewportToModel(viewportPoint.getX()) - translate.getX(),
+                -scaleViewportToModel(viewportPoint.getY()) - translate.getY());
+                
+        return modelPoint;
     }
-
-    double scale(double d) {
+    
+    double scaleAndTranslateViewportToModelY( double y ) {
+        return -scaleViewportToModel( y ) - translate.getY();
+    }
+    
+    double scaleModelToViewport(double d) {
         return d * scale * zoomLevel;
+    }
+    
+    double scaleViewportToModel( double d ) {
+        return  d / scale / zoomLevel;
     }
     
     static SDCTransform buildScaleTransform(GeoExtents geoExtents, double viewPortWidth, double viewPortHeight) {
@@ -72,7 +79,7 @@ class SDCTransform {
         double translateX = -geoExtents.getMidpointWithOriginIncluded().getX() + viewPortWidth / scale / 2;
         double translateY = -geoExtents.getMidpointWithOriginIncluded().getY() - viewPortHeight / scale / 2;
 
-        return new SDCTransform(scale, translateX, translateY);
+        return new SDCTransform(scale, new Point2D(translateX, translateY));
     }
 
     public void setZoomLevel(double zoomLevel) {
@@ -81,12 +88,16 @@ class SDCTransform {
         } else {
             this.zoomLevel *= Math.abs(zoomLevel);
         }
-        System.out.println("zoomLevel " + zoomLevel);
+        System.out.println("zoomLevel " + this.zoomLevel);
     }
 
-    void setZoomCenterInViewportCoords(double zoomCenterX, double zoomCenterY, double viewportWidth, double viewportHeight ) {
-        this.zoomCenterX = zoomCenterX / scale + translateX;
-        this.zoomCenterY = zoomCenterY / scale + translateY;
+    void setZoomCenterInViewportCoords(double zoomCenterX, double zoomCenterY ) {
+        Point2D viewportCoords = new Point2D(zoomCenterX, zoomCenterY);
+        Point2D modelZoomCenter = modelCoordsFromViewportCoords(viewportCoords);
+        
+        this.zoomCenter =  modelZoomCenter;
+        System.out.println("ZoomCenter : " + this.zoomCenter.getX() + ":" + this.zoomCenter.getY());
     }
     
+
 }

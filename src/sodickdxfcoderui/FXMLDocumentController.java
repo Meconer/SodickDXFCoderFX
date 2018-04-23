@@ -16,14 +16,13 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.DepthTest;
-import javafx.scene.canvas.Canvas;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
@@ -98,29 +97,24 @@ public class FXMLDocumentController implements Initializable {
 
         setupResizeHandler();
         setupZoomHandler();
+        setupMouseClickHandler();
     }
 
     private void setupGraphicPaneDragDrop() {
-        graphicsPane.setOnDragOver(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                if (event.getDragboard().hasFiles()) {
-                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                }
+        graphicsPane.setOnDragOver((DragEvent event) -> {
+            if (event.getDragboard().hasFiles()) {
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
         });
 
-        graphicsPane.setOnDragDropped(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                Dragboard dragboard = event.getDragboard();
-                if (dragboard.hasFiles()) {
-                    List<File> droppedFileList = dragboard.getFiles();
-                    File fileToDrop = droppedFileList.get(0);
-                    System.out.println("fileToDrop " + fileToDrop.getAbsolutePath());
-                    Path pathToDropFile = Paths.get(fileToDrop.getAbsolutePath());
-                    openDXFFile(fileToDrop);
-                }
+        graphicsPane.setOnDragDropped((DragEvent event) -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasFiles()) {
+                List<File> droppedFileList = dragboard.getFiles();
+                File fileToDrop = droppedFileList.get(0);
+                System.out.println("fileToDrop " + fileToDrop.getAbsolutePath());
+                Path pathToDropFile = Paths.get(fileToDrop.getAbsolutePath());
+                openDXFFile(fileToDrop);
             }
         });
     }
@@ -164,25 +158,30 @@ public class FXMLDocumentController implements Initializable {
     }
 
     private void setupZoomHandler() {
-        graphicsPane.setOnScroll(new EventHandler<ScrollEvent>() {
-            @Override
-            public void handle(ScrollEvent event) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        double deltaY = event.getDeltaY();
-                        double zoomCenterX = event.getX();
-                        double zoomCenterY = event.getX();
-                        
-                        double zoom = 1.1;
-                        if (deltaY < 0) {
-                            zoom = -zoom;
-                        }
-                        geoModel.setZoomCenterInViewportCoords( zoomCenterX, zoomCenterY, graphicsPane );
-                        geoModel.changeZoomLevel(zoom, graphicsPane);
-                    }
-                });
-            }
+        graphicsPane.setOnScroll((ScrollEvent event) -> {
+            Platform.runLater(() -> {
+                double deltaY = event.getDeltaY();
+                double zoomCenterX = event.getX();
+                double zoomCenterY = event.getY();
+                
+                double zoom = 1.1;
+                if (deltaY < 0) {
+                    zoom = -zoom;
+                }
+                geoModel.setZoomCenterInViewportCoords( zoomCenterX, zoomCenterY );
+                geoModel.changeZoomLevel(zoom, graphicsPane);
+            });
+        });
+    }
+
+    private void setupMouseClickHandler() {
+        graphicsPane.setOnMouseClicked((MouseEvent event) -> {
+            Platform.runLater(() -> {
+                Point2D viewportPoint = new Point2D(event.getX(), event.getY());
+                
+                Point2D modelPoint = geoModel.getModelCoordsFromViewpointCoords( viewportPoint );
+                System.out.println("Mouse clicked at : " + modelPoint.getX() + " : " + modelPoint.getY());
+            });
         });
     }
 

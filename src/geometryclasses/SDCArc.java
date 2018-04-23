@@ -2,6 +2,7 @@ package geometryclasses;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.Arc;
@@ -62,11 +63,11 @@ public class SDCArc extends SDCGeometricEntity {
 
     @Override
     public void drawOnCanvas(Canvas canvas, SDCTransform sdct) {
-        double x = sdct.scaleAndTranslateX(xCenter - radius );
-        double w = sdct.scale(radius * 2);
+        Point2D xy = new Point2D(xCenter-radius, yCenter + radius);
+        Point2D scaledXY = sdct.viewportCoordsFromModelCoords( xy );
+        double w = sdct.scaleModelToViewport(radius * 2);
         double h = w;
-        double y = sdct.scaleAndTranslateY(yCenter + radius );
-        canvas.getGraphicsContext2D().strokeArc(x, y, w, h, stAng, angExt, ArcType.OPEN);
+        canvas.getGraphicsContext2D().strokeArc(scaledXY.getX(), scaledXY.getY(), w, h, stAng, angExt, ArcType.OPEN);
     }
 
 }
