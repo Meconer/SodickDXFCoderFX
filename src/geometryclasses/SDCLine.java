@@ -60,14 +60,14 @@ public class SDCLine extends SDCGeometricEntity {
     public void drawOnCanvas( Canvas canvas, SDCTransform sdct ) {
         Point2D xStart = new Point2D(x1, y1);
         Point2D xEnd = new Point2D(x2, y2);
-        Point2D scaledXStart = sdct.viewportCoordsFromModelCoords(xStart);
-        Point2D scaledXEnd = sdct.viewportCoordsFromModelCoords(xEnd);
+        Point2D viewportXStart = sdct.viewportCoordsFromModelCoords(xStart);
+        Point2D viewportXEnd = sdct.viewportCoordsFromModelCoords(xEnd);
         
         canvas.getGraphicsContext2D().strokeLine(
-                scaledXStart.getX(),
-                scaledXStart.getY(),
-                scaledXEnd.getX(),
-                scaledXEnd.getY() );
+                viewportXStart.getX(),
+                viewportXStart.getY(),
+                viewportXEnd.getX(),
+                viewportXEnd.getY() );
     }
 
 }
