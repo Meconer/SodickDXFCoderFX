@@ -11,44 +11,39 @@ import javafx.geometry.Point2D;
  *
  * @author matsandersson
  */
-class SDCTransform {
+public class SDCTransform {
+    private Point2D viewportBottomLeftInModelSpace;
+    private Point2D viewportTopRightInModelSpace;
+    private double viewportWidth;
+    private double viewportHeight;
 
-    private double scale;
-    private Point2D translation;
-    private double zoomLevel;
-    private Point2D zoomCenter;
-
-    public SDCTransform(double scale, Point2D translation) {
-        this.scale = scale;
-        this.translation = translation;
-        zoomCenter = new Point2D(0, 0);
-        zoomLevel = 1.0;
+    public SDCTransform( 
+            Point2D viewportLowerLeftInModelSpace,
+            Point2D viewportUpperRightInModelSpace,
+            double viewportWidth,
+            double viewportHeight ) {
+        this.viewportBottomLeftInModelSpace = viewportLowerLeftInModelSpace;
+        this.viewportTopRightInModelSpace = viewportUpperRightInModelSpace;
+        this.viewportWidth = viewportWidth;
+        this.viewportHeight = viewportHeight;
     }
 
-    public double getScale() {
-        return scale;
+    private double viewportWidthInModelSpace() {
+        return viewportTopRightInModelSpace.getX() - viewportBottomLeftInModelSpace.getX();
     }
-
-    public void setScale(double scale) {
-        this.scale = scale;
+    
+    private double viewportHeightInModelSpace() {
+        return viewportTopRightInModelSpace.getY() - viewportBottomLeftInModelSpace.getY();
     }
-
-    public Point2D getTranslate() {
-        return translation;
-    }
-
-    public void setTranslate( Point2D translation ) {
-        this.translation = translation;
-    }
-
+    
     public Point2D viewportCoordsFromModelCoords(Point2D modelCoords) {
+        double modelX = modelCoords.getX();
+        double viewportLeftInModelSpace = viewportBottomLeftInModelSpace.getX();
+        double viewportX = ( modelX - viewportLeftInModelSpace ) / viewportWidthInModelSpace() * viewportWidth;
         
-        double distanceToZoomCenterX = modelCoords.getX() - zoomCenter.getX();
-        double distanceToZoomCenterY = modelCoords.getY() - zoomCenter.getY();
-        double zoomedModelX = zoomLevel * distanceToZoomCenterX;
-        double zoomedModelY = zoomLevel * distanceToZoomCenterY;
-        double viewportX = scaleModelToViewport(zoomedModelX + translation.getX());
-        double viewportY = -scaleModelToViewport( zoomedModelY + translation.getY());
+        double modelY = modelCoords.getY();
+        double viewportTopInModelSpace = viewportTopRightInModelSpace.getY();
+        double viewportY = ( modelY - viewportTopInModelSpace ) / viewportHeightInModelSpace() * viewportHeight;
         
         Point2D viewportCoords = new Point2D( viewportX, viewportY ) ;
 
@@ -56,58 +51,59 @@ class SDCTransform {
     }
     
     public Point2D modelCoordsFromViewportCoords( Point2D viewportPoint ) {
-        double zoomedModelX = scaleViewportToModel(viewportPoint.getX() - translation.getX());
-        double zoomedModelY = -scaleViewportToModel(viewportPoint.getY() - translation.getY());
-        
-        double zoomedDistanceToZoomCenterX = zoomedModelX - zoomCenter.getX();
-        double zoomedDistanceToZoomCenterY = zoomedModelY - zoomCenter.getY();
-        
-        double distanceToZoomCenterX = zoomedDistanceToZoomCenterX / zoomLevel;
-        double distanceToZoomCenterY = zoomedDistanceToZoomCenterY / zoomLevel;
-
-        Point2D modelPoint = new Point2D( 
-                distanceToZoomCenterX + zoomCenter.getX(),
-                distanceToZoomCenterY + zoomCenter.getY());
-
-        return modelPoint;
+        double modelX = viewportWidthInModelSpace() * viewportPoint.getX() / viewportWidth + viewportBottomLeftInModelSpace.getX();
+        double modelY = -viewportHeightInModelSpace() * viewportPoint.getY() / viewportWidth +  viewportBottomLeftInModelSpace.getY();
+        return new Point2D(modelX, modelY);
+    }
+    
+    private double getScale() {
+        return viewportWidthInModelSpace() / viewportWidth;
     }
     
     double scaleModelToViewport(double d) {
-        return d * scale * zoomLevel;
+        return d * getScale();
     }
     
     double scaleViewportToModel( double d ) {
-        return  d / scale / zoomLevel;
+        return  d / getScale();
     }
     
     static SDCTransform buildScaleTransform(GeoExtents geoExtents, double viewPortWidth, double viewPortHeight) {
-        double yScale = viewPortHeight / geoExtents.getHeightWithOriginIncluded();
-        double xScale = viewPortWidth / geoExtents.getWidthWithOriginIncluded();
-
+        // Get extra space from preferences
         double extraSpaceInViewport = sodickdxfcoderui.SodickDxfCoderPreferences.getInstance().getExtraSpaceInViewport();
-        double scale = Math.min(xScale, yScale) / extraSpaceInViewport;
+        
+        // Find out how much space needed in x and y
+        double viewPortHeightInModelSpace = geoExtents.getHeightWithOriginIncluded() * extraSpaceInViewport;
+        double viewPortWidthInModelSpace = geoExtents.getWidthWithOriginIncluded() * extraSpaceInViewport;
+        
+        // Check out the scale needed in x and y
+        double scaleX = viewPortWidth / viewPortWidthInModelSpace;
+        double scaleY = viewPortHeight / viewPortHeightInModelSpace;
+        double scale = Math.min(scaleX, scaleY);
+        
+        double midPointX = geoExtents.getMidpoint().getX();
+        double midPointY = geoExtents.getMidpoint().getY();
+        
+        double viewportLeft =  midPointX - viewPortWidthInModelSpace * scaleX / scale / 2;
+        double viewportRight = viewportLeft + viewPortWidthInModelSpace * scaleX / scale ;
+        
+        double viewportBottom = midPointY - viewPortHeightInModelSpace * scaleY / scale / 2;
+        double viewportTop = viewportBottom + viewPortHeightInModelSpace * scaleY/ scale;
 
-        double translateX = -geoExtents.getMidpointWithOriginIncluded().getX() + viewPortWidth / scale / 2;
-        double translateY = -geoExtents.getMidpointWithOriginIncluded().getY() - viewPortHeight / scale / 2;
+        Point2D viewportBottomLeft = new Point2D( viewportLeft, viewportBottom);
+                
+        Point2D viewportTopRight = new Point2D( viewportRight, viewportTop );
 
-        return new SDCTransform(scale, new Point2D(translateX, translateY));
+        return new SDCTransform(viewportBottomLeft, viewportTopRight, viewPortWidth, viewPortHeight );
     }
 
     public void setZoomLevel(double zoomLevel) {
-        if (zoomLevel < 0 ) {
-            this.zoomLevel /= Math.abs(zoomLevel);
-        } else {
-            this.zoomLevel *= Math.abs(zoomLevel);
-        }
-        System.out.println("zoomLevel " + this.zoomLevel);
+
+        System.out.println("zoomLevel " );
     }
 
     void setZoomCenterInViewportCoords(double zoomCenterX, double zoomCenterY ) {
-        Point2D viewportCoords = new Point2D(zoomCenterX, zoomCenterY);
-        Point2D modelZoomCenter = modelCoordsFromViewportCoords(viewportCoords);
-        
-        this.zoomCenter =  modelZoomCenter;
-        System.out.println("ZoomCenter : " + this.zoomCenter.getX() + ":" + this.zoomCenter.getY());
+        System.out.println("ZoomCenter : " );
     }
     
 
