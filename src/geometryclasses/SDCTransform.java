@@ -43,7 +43,7 @@ public class SDCTransform {
         
         double modelY = modelCoords.getY();
         double viewportTopInModelSpace = viewportTopRightInModelSpace.getY();
-        double viewportY = ( modelY - viewportTopInModelSpace ) / viewportHeightInModelSpace() * viewportHeight;
+        double viewportY = ( viewportTopInModelSpace - modelY ) / viewportHeightInModelSpace() * viewportHeight;
         
         Point2D viewportCoords = new Point2D( viewportX, viewportY ) ;
 
@@ -52,12 +52,12 @@ public class SDCTransform {
     
     public Point2D modelCoordsFromViewportCoords( Point2D viewportPoint ) {
         double modelX = viewportWidthInModelSpace() * viewportPoint.getX() / viewportWidth + viewportBottomLeftInModelSpace.getX();
-        double modelY = -viewportHeightInModelSpace() * viewportPoint.getY() / viewportWidth +  viewportBottomLeftInModelSpace.getY();
+        double modelY = -viewportHeightInModelSpace() * viewportPoint.getY() / viewportHeight +  viewportTopRightInModelSpace.getY();
         return new Point2D(modelX, modelY);
     }
     
     private double getScale() {
-        return viewportWidthInModelSpace() / viewportWidth;
+        return viewportWidth / viewportWidthInModelSpace();
     }
     
     double scaleModelToViewport(double d) {
