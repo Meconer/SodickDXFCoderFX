@@ -81,12 +81,12 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     private void zoomPositive(ActionEvent event) {
-        geoModel.changeZoomLevel(1.1, graphicsPane);
+        geoModel.zoom( 1.1, graphicsPane, graphicsPane.getWidth()/2, graphicsPane.getHeight()/2);
     }
 
     @FXML
     private void zoomNegative(ActionEvent event) {
-        geoModel.changeZoomLevel(-1.1, graphicsPane);
+        geoModel.zoom( -1.1, graphicsPane, graphicsPane.getWidth()/2, graphicsPane.getHeight()/2);
     }
 
     @Override
@@ -164,12 +164,11 @@ public class FXMLDocumentController implements Initializable {
                 double zoomCenterX = event.getX();
                 double zoomCenterY = event.getY();
                 
-                double zoom = 1.1;
+                double zoomFactor = 1.1;
                 if (deltaY < 0) {
-                    zoom = -zoom;
+                    zoomFactor = -zoomFactor;
                 }
-                geoModel.setZoomCenterInViewportCoords( zoomCenterX, zoomCenterY );
-                geoModel.changeZoomLevel(zoom, graphicsPane);
+                geoModel.zoom(zoomFactor, graphicsPane, zoomCenterX, zoomCenterY);
             });
         });
     }

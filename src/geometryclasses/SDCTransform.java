@@ -97,14 +97,25 @@ public class SDCTransform {
         return new SDCTransform(viewportBottomLeft, viewportTopRight, viewPortWidth, viewPortHeight );
     }
 
-    public void setZoomLevel(double zoomLevel) {
+    public void zoom( Point2D zoomCenterInViewportCoords, double zoomFactor ) {
+        // Get the old coordinates for the viewport corners
+        double xBottomLeft = viewportBottomLeftInModelSpace.getX();
+        double yBottomLeft = viewportBottomLeftInModelSpace.getY();
+        double xTopRight = viewportTopRightInModelSpace.getX();
+        double yTopRight = viewportTopRightInModelSpace.getY();
+        
+        // Get the zoom center in the model space
+        double zoomCenterX = modelCoordsFromViewportCoords(zoomCenterInViewportCoords).getX();
+        double zoomCenterY = modelCoordsFromViewportCoords(zoomCenterInViewportCoords).getY();
 
-        System.out.println("zoomLevel " );
+        // Calculate the new viewport corners coords
+        xBottomLeft = zoomCenterX - (zoomCenterX - xBottomLeft) * zoomFactor;
+        yBottomLeft = zoomCenterY - (zoomCenterY - yBottomLeft) * zoomFactor;
+        xTopRight = (xTopRight - zoomCenterX ) * zoomFactor + zoomCenterX;
+        yTopRight = (yTopRight - zoomCenterY ) * zoomFactor + zoomCenterY;
+        
+        viewportBottomLeftInModelSpace = new Point2D(xBottomLeft, yBottomLeft);
+        viewportTopRightInModelSpace = new Point2D(xTopRight, yTopRight);
     }
-
-    void setZoomCenterInViewportCoords(double zoomCenterX, double zoomCenterY ) {
-        System.out.println("ZoomCenter : " );
-    }
-    
 
 }

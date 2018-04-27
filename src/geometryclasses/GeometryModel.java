@@ -28,13 +28,9 @@ public class GeometryModel {
     private ChainList chainList = null;
     private SDCTransform sdcTransform;
 
-    public void changeZoomLevel(double zoom, Pane pane) {
-        sdcTransform.setZoomLevel( zoom );
+    public void zoom(double zoomFactor, Pane pane, double zoomCenterX, double zoomCenterY ) {
+        sdcTransform.zoom( new Point2D(zoomCenterX, zoomCenterY), zoomFactor);
         plotOnPane(pane);
-    }
-
-    public void setZoomCenterInViewportCoords(double zoomCenterX, double zoomCenterY) {
-        sdcTransform.setZoomCenterInViewportCoords( zoomCenterX, zoomCenterY );
     }
 
     public Point2D getModelCoordsFromViewpointCoords(Point2D viewportPoint) {
