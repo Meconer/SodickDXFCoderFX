@@ -139,24 +139,4 @@ public class SDCTransform {
         viewportBottomLeftInModelSpace = new Point2D(xBottomLeft, yBottomLeft);
         viewportTopRightInModelSpace = new Point2D(xTopRight, yTopRight);
     }
-    
-    void temporaryPan(Point2D panStartPoint, Point2D panEndPoint ) {
-        
-        Point2D modelPanStartPoint = modelCoordsFromViewportCoords(panStartPoint);
-        Point2D modelPanEndPoint = modelCoordsFromViewportCoords(panEndPoint);
-        
-        double distanceX = modelPanEndPoint.getX() - modelPanStartPoint.getX();
-        double distanceY = modelPanEndPoint.getY() - modelPanStartPoint.getY();
-
-        double xBottomLeft = viewportBottomLeftInModelSpace.getX() - distanceX;
-        double yBottomLeft = viewportBottomLeftInModelSpace.getY() - distanceY;
-        double xTopRight = viewportTopRightInModelSpace.getX() - distanceX;
-        double yTopRight = viewportTopRightInModelSpace.getY() - distanceY;
-        
-        temporaryViewportBottomLeftInModelSpace = new Point2D(xBottomLeft, yBottomLeft);
-        temporaryViewportTopRightInModelSpace = new Point2D(xTopRight, yTopRight);
-    }
-    
-    
-
 }

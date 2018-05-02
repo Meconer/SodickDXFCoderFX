@@ -38,7 +38,7 @@
       </MenuBar>
    </top>
    <left>
-      <ListView prefHeight="683.0" prefWidth="102.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="linkListView" prefHeight="683.0" prefWidth="102.0" BorderPane.alignment="CENTER" />
    </left>
    <right>
       <TextArea fx:id="logTextArea" prefHeight="683.0" prefWidth="134.0" BorderPane.alignment="CENTER" />

@@ -27,6 +27,7 @@ public class GeometryModel {
 
     private ChainList chainList = null;
     private SDCTransform sdcTransform;
+    private int selectedIndex = -1;
 
     public void zoom(double zoomFactor, Pane pane, double zoomCenterX, double zoomCenterY ) {
         sdcTransform.zoom( new Point2D(zoomCenterX, zoomCenterY), zoomFactor);
@@ -46,8 +47,12 @@ public class GeometryModel {
         sdcTransform.pan( panStartPoint, currentPanPoint );
     }
 
-    public void temporaryPan(Point2D panStartPoint, Point2D currentPanPoint) {
-        sdcTransform.temporaryPan( panStartPoint, currentPanPoint );
+    public int getNoOfLinks() {
+        return chainList.listOfChains.size();
+    }
+
+    public void setSelectedLink(int selectedIndex) {
+        this.selectedIndex = selectedIndex;
     }
 
     private enum Action {
@@ -73,11 +78,19 @@ public class GeometryModel {
         canvas.getGraphicsContext2D().setLineWidth(2.0);
         pane.getChildren().add(canvas);
         if (chainList != null) {
-            for (Chain chain : chainList) {
-                canvas.getGraphicsContext2D().setStroke(Color.RED);
-                for (SDCGeometricEntity geoEntity : chain) {
+            for (int chainIndex = 0 ; chainIndex < chainList.listOfChains.size() ; chainIndex++ ) {
+                if ( chainIndex == selectedIndex ) {
+                    canvas.getGraphicsContext2D().setStroke(Color.YELLOW);
+                } else {
+                    canvas.getGraphicsContext2D().setStroke(Color.RED);
+                }
+                for (SDCGeometricEntity geoEntity : chainList.listOfChains.get(chainIndex)) {
                     geoEntity.drawOnCanvas(canvas, sdcTransform);
-                    canvas.getGraphicsContext2D().setStroke(Color.GREEN);
+                    if ( chainIndex == selectedIndex ) {
+                        canvas.getGraphicsContext2D().setStroke(Color.BLUE);
+                    } else {
+                        canvas.getGraphicsContext2D().setStroke(Color.GREEN);
+                    }
                 }
             }
 

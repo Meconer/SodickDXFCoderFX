@@ -21,6 +21,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -37,14 +39,16 @@ public class FXMLDocumentController implements Initializable {
 
     GeometryModel geoModel = new GeometryModel();
     private boolean mousePanningGoingOn;
+    private Point2D panStartPoint;
 
+    @FXML
+    private ListView linkListView;
     
     @FXML
     private Label statusLabel;
 
     @FXML
     private Pane graphicsPane;
-    private Point2D panStartPoint;
 
     @FXML
     private void menuOpenAction(ActionEvent event) {
@@ -102,6 +106,7 @@ public class FXMLDocumentController implements Initializable {
         setupResizeHandler();
         setupZoomHandler();
         setupMouseClickHandler();
+        setupLinkListHandler();
     }
 
     private void setupGraphicPaneDragDrop() {
@@ -148,12 +153,30 @@ public class FXMLDocumentController implements Initializable {
         if (geoModel.openDxfFile(fileToOpen)) {
             geoModel.setInitialScale(graphicsPane);
             geoModel.plotOnPane(graphicsPane);
+            showInfo();
+        }
+    }
+    
+    private void showInfo() {
+        int noOfLinks = geoModel.getNoOfLinks();
+        linkListView.getItems().clear();
+        for ( int i = 0 ; i < noOfLinks ; i++ ) {
+            linkListView.getItems().add(new String( "Kedja " + (i+1)));
         }
     }
 
     private void redraw() {
         geoModel.plotOnPane(graphicsPane);
     }
+
+    private void setupLinkListHandler() {
+        linkListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        linkListView.getSelectionModel().selectedItemProperty().addListener((observable) -> {
+            geoModel.setSelectedLink( linkListView.getSelectionModel().getSelectedIndex());
+            geoModel.plotOnPane(graphicsPane);
+        });
+    }
+
 
     private void setupResizeHandler() {
         graphicsPane.widthProperty().addListener(resizeListener());
