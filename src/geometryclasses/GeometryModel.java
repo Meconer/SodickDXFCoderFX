@@ -32,9 +32,22 @@ public class GeometryModel {
         sdcTransform.zoom( new Point2D(zoomCenterX, zoomCenterY), zoomFactor);
         plotOnPane(pane);
     }
+    
+    public void zoomOnOrigo( double zoomFactor, Pane pane ) {
+        sdcTransform.zoomOnOrigo(zoomFactor);
+        plotOnPane(pane);
+    }
 
     public Point2D getModelCoordsFromViewpointCoords(Point2D viewportPoint) {
         return sdcTransform.modelCoordsFromViewportCoords(viewportPoint);
+    }
+
+    public void pan(Point2D panStartPoint, Point2D currentPanPoint) {
+        sdcTransform.pan( panStartPoint, currentPanPoint );
+    }
+
+    public void temporaryPan(Point2D panStartPoint, Point2D currentPanPoint) {
+        sdcTransform.temporaryPan( panStartPoint, currentPanPoint );
     }
 
     private enum Action {

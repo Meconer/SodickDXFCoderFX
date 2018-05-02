@@ -19,6 +19,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -35,12 +36,15 @@ import javafx.stage.FileChooser;
 public class FXMLDocumentController implements Initializable {
 
     GeometryModel geoModel = new GeometryModel();
+    private boolean mousePanningGoingOn;
 
+    
     @FXML
     private Label statusLabel;
 
     @FXML
     private Pane graphicsPane;
+    private Point2D panStartPoint;
 
     @FXML
     private void menuOpenAction(ActionEvent event) {
@@ -81,12 +85,12 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     private void zoomPositive(ActionEvent event) {
-        geoModel.zoom( 1.1, graphicsPane, graphicsPane.getWidth()/2, graphicsPane.getHeight()/2);
+        geoModel.zoomOnOrigo(1/1.1, graphicsPane);
     }
 
     @FXML
     private void zoomNegative(ActionEvent event) {
-        geoModel.zoom( 1/1.1, graphicsPane, graphicsPane.getWidth()/2, graphicsPane.getHeight()/2);
+        geoModel.zoomOnOrigo(1.1, graphicsPane );
     }
 
     @Override
@@ -181,6 +185,45 @@ public class FXMLDocumentController implements Initializable {
                 Point2D modelPoint = geoModel.getModelCoordsFromViewpointCoords( viewportPoint );
                 System.out.println("Mouse clicked at : " + modelPoint.getX() + " : " + modelPoint.getY());
             });
+        });
+        
+        graphicsPane.setOnMousePressed((event) -> {
+            mousePanningGoingOn = true;
+            panStartPoint = new Point2D(event.getX(), event.getY());
+            Platform.runLater(() -> {
+                Point2D viewportPoint = new Point2D(event.getX(), event.getY());
+                Point2D modelPoint = geoModel.getModelCoordsFromViewpointCoords( viewportPoint );
+                System.out.println("Mouse pressed at : " + viewportPoint.getX() + " : " + viewportPoint.getY());
+            });
+        });
+        
+        graphicsPane.setOnMouseDragged((event) -> {
+            if ( mousePanningGoingOn ) {
+                graphicsPane.setCursor(Cursor.CLOSED_HAND);
+                Point2D currentPanPoint = new Point2D(event.getX(), event.getY());
+                Platform.runLater(() -> {
+                    geoModel.pan( panStartPoint, currentPanPoint );
+                    geoModel.plotOnPane(graphicsPane);
+                    panStartPoint = currentPanPoint;
+                    Point2D viewportPoint = new Point2D(event.getX(), event.getY());
+                    System.out.println("Mouse moved to : " + viewportPoint.getX() + " : " + viewportPoint.getY());
+                });
+            }
+        });
+        
+        graphicsPane.setOnMouseReleased((event) -> {
+            if ( mousePanningGoingOn ) {
+                Point2D currentPanPoint = new Point2D(event.getX(), event.getY());
+                mousePanningGoingOn = false;
+                graphicsPane.setCursor(Cursor.DEFAULT);
+                Platform.runLater(() -> {
+                    geoModel.pan( panStartPoint, currentPanPoint );
+                    geoModel.plotOnPane(graphicsPane);
+                    Point2D viewportPoint = new Point2D(event.getX(), event.getY());
+                    Point2D modelPoint = geoModel.getModelCoordsFromViewpointCoords( viewportPoint );
+                    System.out.println("Mouse released at : " + viewportPoint.getX() + " : " + viewportPoint.getY());
+                });
+            }
         });
     }
 

@@ -16,6 +16,8 @@ public class SDCTransform {
     private Point2D viewportTopRightInModelSpace;
     private double viewportWidth;
     private double viewportHeight;
+    private Point2D temporaryViewportBottomLeftInModelSpace;
+    private Point2D temporaryViewportTopRightInModelSpace;
 
     public SDCTransform( 
             Point2D viewportLowerLeftInModelSpace,
@@ -97,6 +99,10 @@ public class SDCTransform {
         return new SDCTransform(viewportBottomLeft, viewportTopRight, viewPortWidth, viewPortHeight );
     }
 
+    public void zoomOnOrigo( double zoomFactor ) {
+        zoom( viewportCoordsFromModelCoords(new Point2D(0,0)), zoomFactor);
+    }
+    
     public void zoom( Point2D zoomCenterInViewportCoords, double zoomFactor ) {
         // Get the old coordinates for the viewport corners
         double xBottomLeft = viewportBottomLeftInModelSpace.getX();
@@ -117,5 +123,40 @@ public class SDCTransform {
         viewportBottomLeftInModelSpace = new Point2D(xBottomLeft, yBottomLeft);
         viewportTopRightInModelSpace = new Point2D(xTopRight, yTopRight);
     }
+
+    void pan(Point2D panStartPoint, Point2D panEndPoint) {
+        Point2D modelPanStartPoint = modelCoordsFromViewportCoords(panStartPoint);
+        Point2D modelPanEndPoint = modelCoordsFromViewportCoords(panEndPoint);
+        
+        double distanceX = modelPanEndPoint.getX() - modelPanStartPoint.getX();
+        double distanceY = modelPanEndPoint.getY() - modelPanStartPoint.getY();
+
+        double xBottomLeft = viewportBottomLeftInModelSpace.getX() - distanceX;
+        double yBottomLeft = viewportBottomLeftInModelSpace.getY() - distanceY;
+        double xTopRight = viewportTopRightInModelSpace.getX() - distanceX;
+        double yTopRight = viewportTopRightInModelSpace.getY() - distanceY;
+        
+        viewportBottomLeftInModelSpace = new Point2D(xBottomLeft, yBottomLeft);
+        viewportTopRightInModelSpace = new Point2D(xTopRight, yTopRight);
+    }
+    
+    void temporaryPan(Point2D panStartPoint, Point2D panEndPoint ) {
+        
+        Point2D modelPanStartPoint = modelCoordsFromViewportCoords(panStartPoint);
+        Point2D modelPanEndPoint = modelCoordsFromViewportCoords(panEndPoint);
+        
+        double distanceX = modelPanEndPoint.getX() - modelPanStartPoint.getX();
+        double distanceY = modelPanEndPoint.getY() - modelPanStartPoint.getY();
+
+        double xBottomLeft = viewportBottomLeftInModelSpace.getX() - distanceX;
+        double yBottomLeft = viewportBottomLeftInModelSpace.getY() - distanceY;
+        double xTopRight = viewportTopRightInModelSpace.getX() - distanceX;
+        double yTopRight = viewportTopRightInModelSpace.getY() - distanceY;
+        
+        temporaryViewportBottomLeftInModelSpace = new Point2D(xBottomLeft, yBottomLeft);
+        temporaryViewportTopRightInModelSpace = new Point2D(xTopRight, yTopRight);
+    }
+    
+    
 
 }
