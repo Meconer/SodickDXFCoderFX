@@ -6,11 +6,10 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
-import sodickdxfcoderui.Utilities;
 
 public class ChainList implements Iterable<Chain> {
 
-    ArrayList<Chain> listOfChains;
+    private ArrayList<Chain> listOfChains;
 
     // Constructor. Create a new list of chains
     public ChainList() {
@@ -79,8 +78,8 @@ public class ChainList implements Iterable<Chain> {
         ArrayList<SDCGeometricEntity> candidateList = new ArrayList<>();
         for (int i = 0; i < listOfChains.size(); i++) {
             Chain ch = listOfChains.get(i);
-            for (int j = 0; j < ch.entityList.size(); j++) {
-                SDCGeometricEntity geo = ch.entityList.get(j);
+            for (int j = 0; j < ch.getSize(); j++) {
+                SDCGeometricEntity geo = ch.getEntity(j);
                 geo.setSelected(false);
                 if (geo.geometryType == GeometryType.ARC) {
                     SDCArc a = (SDCArc) geo;
@@ -117,5 +116,14 @@ public class ChainList implements Iterable<Chain> {
         } else {
             return false;
         }
+    }
+
+    public int getSize() {
+        return listOfChains.size();
+    }
+
+    public Chain getChain(int chainIndex) {
+        if ( chainIndex > listOfChains.size() ) return null;
+        return listOfChains.get(chainIndex);
     }
 }

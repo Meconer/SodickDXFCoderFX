@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import javafx.geometry.Point2D;
@@ -27,7 +28,7 @@ public class GeometryModel {
 
     private ChainList chainList = null;
     private SDCTransform sdcTransform;
-    private int selectedIndex = -1;
+    private List<Integer> selectedIndices = new LinkedList<>();
 
     public void zoom(double zoomFactor, Pane pane, double zoomCenterX, double zoomCenterY ) {
         sdcTransform.zoom( new Point2D(zoomCenterX, zoomCenterY), zoomFactor);
@@ -47,13 +48,24 @@ public class GeometryModel {
         sdcTransform.pan( panStartPoint, currentPanPoint );
     }
 
-    public int getNoOfLinks() {
-        return chainList.listOfChains.size();
+    public int getNoOfChains() {
+        return chainList.getSize();
     }
 
-    public void setSelectedLink(int selectedIndex) {
-        this.selectedIndex = selectedIndex;
+    public void setSelectedLinks(List<Integer> selectedIndices) {
+        this.selectedIndices = selectedIndices;
+        for ( Chain chain : chainList ) {
+            chain.setSelected(false);
+        }
+        selectedIndices.forEach((index) -> {
+            chainList.getChain(index).setSelected(true);
+        });
     }
+
+    public Chain getChain(int chainIndex) {
+        if (chainIndex < getNoOfChains() ) return chainList.getChain(chainIndex);
+        return null;
+    };
 
     private enum Action {
         REPLACE, ADD, CANCEL
@@ -78,20 +90,21 @@ public class GeometryModel {
         canvas.getGraphicsContext2D().setLineWidth(2.0);
         pane.getChildren().add(canvas);
         if (chainList != null) {
-            for (int chainIndex = 0 ; chainIndex < chainList.listOfChains.size() ; chainIndex++ ) {
-                if ( chainIndex == selectedIndex ) {
+            for (int chainIndex = 0 ; chainIndex < chainList.getSize() ; chainIndex++ ) {
+                Chain chain = chainList.getChain( chainIndex );
+                if ( chain.isSelected()) {
                     canvas.getGraphicsContext2D().setStroke(Color.YELLOW);
                 } else {
                     canvas.getGraphicsContext2D().setStroke(Color.RED);
                 }
-                for (SDCGeometricEntity geoEntity : chainList.listOfChains.get(chainIndex)) {
-                    geoEntity.drawOnCanvas(canvas, sdcTransform);
-                    if ( chainIndex == selectedIndex ) {
-                        canvas.getGraphicsContext2D().setStroke(Color.BLUE);
-                    } else {
-                        canvas.getGraphicsContext2D().setStroke(Color.GREEN);
+                    for (SDCGeometricEntity geoEntity : chain) {
+                        geoEntity.drawOnCanvas(canvas, sdcTransform);
+                        if ( chain.isSelected() ) {
+                            canvas.getGraphicsContext2D().setStroke(Color.BLUE);
+                        } else {
+                            canvas.getGraphicsContext2D().setStroke(Color.GREEN);
+                        }
                     }
-                }
             }
 
             SDCLine xAxis = new SDCLine(-10, 0, 10, 0);

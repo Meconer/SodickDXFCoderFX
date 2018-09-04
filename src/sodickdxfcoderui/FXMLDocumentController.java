@@ -5,11 +5,15 @@
  */
 package sodickdxfcoderui;
 
+import geometryclasses.Chain;
+import geometryclasses.ChainList;
 import geometryclasses.GeometryModel;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -42,7 +46,7 @@ public class FXMLDocumentController implements Initializable {
     private Point2D panStartPoint;
 
     @FXML
-    private ListView linkListView;
+    private ListView<String> chainListView;
     
     @FXML
     private Label statusLabel;
@@ -59,11 +63,12 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void menuExitAction(ActionEvent event) {
         System.out.println("Menu Exit");
+        System.exit(0);
     }
 
     @FXML
     private void menuReverseLinkAction(ActionEvent event) {
-        System.out.println("Menu Reverse Link");
+        userReverseLink();
     }
 
     @FXML
@@ -106,7 +111,7 @@ public class FXMLDocumentController implements Initializable {
         setupResizeHandler();
         setupZoomHandler();
         setupMouseClickHandler();
-        setupLinkListHandler();
+        setupChainListHandler();
     }
 
     private void setupGraphicPaneDragDrop() {
@@ -158,22 +163,39 @@ public class FXMLDocumentController implements Initializable {
     }
     
     private void showInfo() {
-        int noOfLinks = geoModel.getNoOfLinks();
-        linkListView.getItems().clear();
-        for ( int i = 0 ; i < noOfLinks ; i++ ) {
-            linkListView.getItems().add(new String( "Kedja " + (i+1)));
+        int noOfChains = geoModel.getNoOfChains();
+        chainListView.getItems().clear();
+        for ( int i = 0 ; i < noOfChains ; i++ ) {
+            chainListView.getItems().add(new String( "Kedja " + (i+1)));
         }
     }
 
+    private void userReverseLink() {
+        List<Integer> selectedChainIndices = chainListView.getSelectionModel().getSelectedIndices();
+        
+        for ( int index : selectedChainIndices ) {
+            geoModel.getChain(index).reverseChain();
+        }
+        
+        redraw();
+    }
+
+    
+    
     private void redraw() {
         geoModel.plotOnPane(graphicsPane);
     }
 
-    private void setupLinkListHandler() {
-        linkListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        linkListView.getSelectionModel().selectedItemProperty().addListener((observable) -> {
-            geoModel.setSelectedLink( linkListView.getSelectionModel().getSelectedIndex());
-            geoModel.plotOnPane(graphicsPane);
+    private void setupChainListHandler() {
+        chainListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        
+        chainListView.getSelectionModel().selectedItemProperty().addListener((observable) -> {
+//            geoModel.setSelectedLinks( chainListView.getSelectionModel().getSelectedIndices());
+              List<Integer> selectedChainIndices = chainListView.getSelectionModel().getSelectedIndices();
+              for ( int chainIndex = 0 ; chainIndex < chainListView.getItems().size() ; chainIndex++ ) {
+                  geoModel.getChain(chainIndex).setSelected(selectedChainIndices.contains(chainIndex));
+              }
+              geoModel.plotOnPane(graphicsPane);
         });
     }
 

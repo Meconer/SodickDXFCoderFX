@@ -7,7 +7,7 @@ import java.util.ListIterator;
 
 public class Chain implements Iterable<SDCGeometricEntity>{
 
-	ArrayList<SDCGeometricEntity> entityList;
+	private ArrayList<SDCGeometricEntity> entityList;
 	private static final double CHAIN_LINK_DISTANCE = 0.002;
 	private boolean selected = false;
 
@@ -167,6 +167,14 @@ public class Chain implements Iterable<SDCGeometricEntity>{
 		}
 		this.entityList = newChain.entityList;
 	}
+
+    public int getSize() {
+        return entityList.size();
+    }
+
+    SDCGeometricEntity getEntity(int j) {
+        return entityList.get(j);
+    }
 
 
 }
