@@ -27,7 +27,7 @@
           <Menu mnemonicParsing="false" text="Verktyg">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#menuReverseLinkAction" text="Reversera länk" />
-                  <MenuItem mnemonicParsing="false" onAction="#menuRedraw" text="Rita om" />
+                  <!-- MenuItem mnemonicParsing="false" onAction="#menuRedraw" text="Rita om" /-->
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Kod">

@@ -126,4 +126,12 @@ public class ChainList implements Iterable<Chain> {
         if ( chainIndex > listOfChains.size() ) return null;
         return listOfChains.get(chainIndex);
     }
+    
+    public void reverseSelectedChains() {
+        Iterator<Chain> clIter = listOfChains.iterator();
+        while ( clIter.hasNext() ) {
+            Chain chain = clIter.next();
+            if (chain.isSelected() ) chain.reverseChain();
+        }
+    }
 }

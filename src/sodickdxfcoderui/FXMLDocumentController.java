@@ -5,15 +5,12 @@
  */
 package sodickdxfcoderui;
 
-import geometryclasses.Chain;
-import geometryclasses.ChainList;
 import geometryclasses.GeometryModel;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -68,12 +65,13 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void menuReverseLinkAction(ActionEvent event) {
+        System.out.println("Menu Reverse Link");
         userReverseLink();
     }
 
     @FXML
     private void menuRedraw(ActionEvent event) {
-        System.out.println("Menu Reverse Link");
+        System.out.println("Menu Redraw");
         redraw();
     }
 
@@ -166,16 +164,16 @@ public class FXMLDocumentController implements Initializable {
         int noOfChains = geoModel.getNoOfChains();
         chainListView.getItems().clear();
         for ( int i = 0 ; i < noOfChains ; i++ ) {
-            chainListView.getItems().add(new String( "Kedja " + (i+1)));
+            chainListView.getItems().add(("Kedja " + (i+1)));
         }
     }
 
     private void userReverseLink() {
         List<Integer> selectedChainIndices = chainListView.getSelectionModel().getSelectedIndices();
         
-        for ( int index : selectedChainIndices ) {
+        selectedChainIndices.forEach((index) -> {
             geoModel.getChain(index).reverseChain();
-        }
+        });
         
         redraw();
     }

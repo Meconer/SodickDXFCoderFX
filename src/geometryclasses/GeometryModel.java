@@ -93,16 +93,16 @@ public class GeometryModel {
             for (int chainIndex = 0 ; chainIndex < chainList.getSize() ; chainIndex++ ) {
                 Chain chain = chainList.getChain( chainIndex );
                 if ( chain.isSelected()) {
-                    canvas.getGraphicsContext2D().setStroke(Color.YELLOW);
+                    canvas.getGraphicsContext2D().setStroke(SELECTED_CHAIN_START_COLOR);
                 } else {
-                    canvas.getGraphicsContext2D().setStroke(Color.RED);
+                    canvas.getGraphicsContext2D().setStroke(UNSELECTED_CHAIN_START_COLOR);
                 }
                     for (SDCGeometricEntity geoEntity : chain) {
                         geoEntity.drawOnCanvas(canvas, sdcTransform);
                         if ( chain.isSelected() ) {
-                            canvas.getGraphicsContext2D().setStroke(Color.BLUE);
+                            canvas.getGraphicsContext2D().setStroke(SELECTED_CHAIN_COLOR);
                         } else {
-                            canvas.getGraphicsContext2D().setStroke(Color.GREEN);
+                            canvas.getGraphicsContext2D().setStroke(UNSELECTED_CHAIN_COLOR);
                         }
                     }
             }
@@ -117,6 +117,10 @@ public class GeometryModel {
             canvas.getGraphicsContext2D().setLineDashes(0);
         }
     }
+    private static final Color UNSELECTED_CHAIN_COLOR = Color.LIGHTBLUE;
+    private static final Color UNSELECTED_CHAIN_START_COLOR = Color.ORANGE;
+    private static final Color SELECTED_CHAIN_COLOR = Color.BLUE;
+    private static final Color SELECTED_CHAIN_START_COLOR = Color.RED;
 
     public Boolean openDxfFile(File fileToOpen) {
         if (chainList != null) {
