@@ -7,10 +7,10 @@ package sodickdxfcoderui;
 
 import geometryclasses.GeometryModel;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -18,9 +18,13 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
@@ -31,6 +35,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  *
@@ -50,6 +55,8 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private Pane graphicsPane;
+    private Stage stage;
+
 
     @FXML
     private void menuOpenAction(ActionEvent event) {
@@ -76,8 +83,18 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void menuCodeStraightAction(ActionEvent event) {
+    private void menuCodeStraightAction(ActionEvent event) throws IOException {
         System.out.println("Menu Code Straight");
+        
+        Parent codeStraightDialogParent = FXMLLoader.load(getClass().getResource("CodeStraightDialog.fxml"));
+        Scene codeStraightScene = new Scene(codeStraightDialogParent);
+        
+        Stage dialogStage = new Stage();
+              
+        dialogStage.setScene(codeStraightScene);
+        dialogStage.showAndWait();
+
+        
     }
 
     @FXML
@@ -278,5 +295,10 @@ public class FXMLDocumentController implements Initializable {
             });
         };
     }
+
+    void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
 
 }
