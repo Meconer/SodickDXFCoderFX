@@ -5,6 +5,8 @@
  */
 package sodickdxfcoderui;
 
+import UtilPkg.Util;
+import codingPkg.CodeStraightDialogController;
 import geometryclasses.GeometryModel;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +24,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -46,7 +47,7 @@ public class FXMLDocumentController implements Initializable {
     GeometryModel geoModel = new GeometryModel();
     private boolean mousePanningGoingOn;
     private Point2D panStartPoint;
-
+    
     @FXML
     private ListView<String> chainListView;
     
@@ -55,8 +56,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private Pane graphicsPane;
-    private Stage stage;
-
+    
 
     @FXML
     private void menuOpenAction(ActionEvent event) {
@@ -86,15 +86,23 @@ public class FXMLDocumentController implements Initializable {
     private void menuCodeStraightAction(ActionEvent event) throws IOException {
         System.out.println("Menu Code Straight");
         
-        Parent codeStraightDialogParent = FXMLLoader.load(getClass().getResource("CodeStraightDialog.fxml"));
+        FXMLLoader fXMLLoader = new FXMLLoader(CodeStraightDialogController.class.getResource("CodeStraightDialog.fxml"));
+        Parent codeStraightDialogParent = fXMLLoader.load();
+        CodeStraightDialogController codeStraightDialogController = fXMLLoader.getController();
+        
+        codeStraightDialogController.initModel( geoModel );
+        
+        if ( geoModel.getNumberOfSelectedLinks()== 0 ) {
+            Util.reportError("Ingen kedja vald");
+            return;
+        }
+
         Scene codeStraightScene = new Scene(codeStraightDialogParent);
         
         Stage dialogStage = new Stage();
               
         dialogStage.setScene(codeStraightScene);
         dialogStage.showAndWait();
-
-        
     }
 
     @FXML
@@ -295,10 +303,5 @@ public class FXMLDocumentController implements Initializable {
             });
         };
     }
-
-    void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
 
 }

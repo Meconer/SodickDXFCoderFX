@@ -172,7 +172,7 @@ public class Chain implements Iterable<SDCGeometricEntity>{
         return entityList.size();
     }
 
-    SDCGeometricEntity getEntity(int j) {
+    public SDCGeometricEntity getEntity(int j) {
         return entityList.get(j);
     }
 

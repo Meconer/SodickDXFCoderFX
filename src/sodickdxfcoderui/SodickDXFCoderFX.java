@@ -28,8 +28,6 @@ public class SodickDXFCoderFX extends Application {
         stage.setScene(scene);
         stage.show();
         
-        FXMLDocumentController controller = loader.getController();
-        controller.setStage( stage );
     }
 
     /**

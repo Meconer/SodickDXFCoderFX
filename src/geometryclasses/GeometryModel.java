@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,24 @@ public class GeometryModel {
         selectedIndices.forEach((index) -> {
             chainList.getChain(index).setSelected(true);
         });
+    }
+    
+    public ArrayList<Chain> getSelectedLinks() {
+        ArrayList<Chain> selectedChains = new ArrayList<>();
+        for ( Chain chain : chainList ) {
+            if (chain.isSelected() ) selectedChains.add(chain);
+        }
+        return selectedChains;
+    }
+    
+    public int getNumberOfSelectedLinks() {
+        int counter = 0 ;
+        if ( chainList == null ) return 0;
+        if ( chainList.isEmpty())  return 0;
+        for ( Chain chain : chainList ) {
+            if ( chain.isSelected() ) counter++;
+        }
+        return counter;
     }
 
     public Chain getChain(int chainIndex) {
