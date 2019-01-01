@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 
@@ -31,6 +32,9 @@ public class CodeStraightDialogController implements Initializable {
     private RadioButton oneCutRadioButton;
     @FXML
     private RadioButton sixCutsRadioButton;
+    
+    @FXML
+    private CheckBox m199CheckBox;
 
     @FXML
     private Button codeStraightButton;
@@ -80,7 +84,7 @@ public class CodeStraightDialogController implements Initializable {
 
 
             
-        StraightCoder straightCoder = new StraightCoder(compensationType, noOfCuts);
+        StraightCoder straightCoder = new StraightCoder(compensationType, noOfCuts, m199CheckBox.isSelected() );
        
         if (geoModel.getNumberOfSelectedLinks() != 1) {
             Util.reportError("Välj en kedja");

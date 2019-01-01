@@ -37,12 +37,28 @@ public class Chain implements Iterable<SDCGeometricEntity>{
 		return startPoint;
 	}
 
+	public Point2D.Double getSecondPoint() {
+		if (entityList.isEmpty()) return null;
+		Point2D.Double secondPoint = new Point2D.Double();
+		secondPoint.x = entityList.get(0).getX2();
+		secondPoint.y = entityList.get(0).getY2();
+		return secondPoint;
+	}
+
 	public Point2D.Double getEndPoint() {
 		if (entityList.isEmpty()) return null;
 		Point2D.Double startPoint = new Point2D.Double();
 		startPoint.x = entityList.get(entityList.size()-1).getX2();
 		startPoint.y = entityList.get(entityList.size()-1).getY2();
 		return startPoint;
+	}
+
+	public Point2D.Double getNextToLastPoint() {
+		if (entityList.isEmpty()) return null;
+		Point2D.Double nextToLastPoint = new Point2D.Double();
+		nextToLastPoint.x = entityList.get(entityList.size()-1).getX1();
+		nextToLastPoint.y = entityList.get(entityList.size()-1).getY1();
+		return nextToLastPoint;
 	}
 
 	
