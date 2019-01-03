@@ -11,9 +11,9 @@ import java.util.prefs.Preferences;
  *
  * @author matsandersson
  */
-public class SodickDxfCoderPreferences {
+public class SodickDxfCoderFXPreferences {
 
-    private static SodickDxfCoderPreferences instance = null;
+    private static SodickDxfCoderFXPreferences instance = null;
     private final Preferences prefs = Preferences.userNodeForPackage(getClass());
 
     private final String DEFAULT_DIRECTORY = "J:\\NCDOK";
@@ -22,17 +22,17 @@ public class SodickDxfCoderPreferences {
     private final double DEFAULT_EXTRA_SPACE_IN_VIEWPORT = 1.1; // 10% extra space around geometry in viewport
     private final String DEFAULT_EXTRA_SPACE_IN_VIEWPORT_KEY = "DefaultExtraSpaceInViewport";
     
-    
     private String defaultDirectory;
+    private String currentFileName;
     private double extraSpaceInViewport;
 
-    protected SodickDxfCoderPreferences() {
+    protected SodickDxfCoderFXPreferences() {
         initPrefs();
     }
 
-    public static SodickDxfCoderPreferences getInstance() {
+    public static SodickDxfCoderFXPreferences getInstance() {
         if (instance == null) {
-            instance = new SodickDxfCoderPreferences();
+            instance = new SodickDxfCoderFXPreferences();
         }
         return instance;
     }
@@ -40,6 +40,7 @@ public class SodickDxfCoderPreferences {
     private void initPrefs() {
         defaultDirectory = prefs.get(DEFAULT_DIRECTORY_KEY, DEFAULT_DIRECTORY);
         extraSpaceInViewport = prefs.getDouble(DEFAULT_EXTRA_SPACE_IN_VIEWPORT_KEY, DEFAULT_EXTRA_SPACE_IN_VIEWPORT);
+        currentFileName = "";
     }
 
     public String getDefaultDirectory() {
@@ -58,6 +59,15 @@ public class SodickDxfCoderPreferences {
     public void setExtraSpaceInViewport(double extraSpaceInViewport) {
         this.extraSpaceInViewport = extraSpaceInViewport;
         prefs.putDouble(DEFAULT_EXTRA_SPACE_IN_VIEWPORT_KEY, extraSpaceInViewport);
+    }
+
+    public String getCurrentFileName() {
+        return currentFileName;
+    }
+
+    public void setCurrentFileName(String currentFileName) {
+        this.currentFileName = currentFileName;
+        System.out.println("currentFileName = " + currentFileName );
     }
 
 }

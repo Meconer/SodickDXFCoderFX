@@ -30,7 +30,7 @@ import sodickdxfcoderui.SodickDxfCoderFXPreferences;
  *
  * @author Mats Andersson <mats.andersson@mecona.se>
  */
-public class CodeStraightDialogController implements Initializable {
+public class CodeAngleDialogController implements Initializable {
 
     @FXML
     private RadioButton g41RadioButton;

@@ -5,23 +5,23 @@
  */
 package geometryclasses;
 
-import javafx.geometry.Point2D;
+import java.awt.geom.Point2D;
 
 /**
  *
  * @author matsandersson
  */
 public class SDCTransform {
-    private Point2D viewportBottomLeftInModelSpace;
-    private Point2D viewportTopRightInModelSpace;
-    private double viewportWidth;
-    private double viewportHeight;
-    private Point2D temporaryViewportBottomLeftInModelSpace;
-    private Point2D temporaryViewportTopRightInModelSpace;
+    private Point2D.Double viewportBottomLeftInModelSpace;
+    private Point2D.Double viewportTopRightInModelSpace;
+    private final double viewportWidth;
+    private final double viewportHeight;
+    private Point2D.Double temporaryViewportBottomLeftInModelSpace;
+    private Point2D.Double temporaryViewportTopRightInModelSpace;
 
     public SDCTransform( 
-            Point2D viewportLowerLeftInModelSpace,
-            Point2D viewportUpperRightInModelSpace,
+            Point2D.Double viewportLowerLeftInModelSpace,
+            Point2D.Double viewportUpperRightInModelSpace,
             double viewportWidth,
             double viewportHeight ) {
         this.viewportBottomLeftInModelSpace = viewportLowerLeftInModelSpace;
@@ -38,7 +38,7 @@ public class SDCTransform {
         return viewportTopRightInModelSpace.getY() - viewportBottomLeftInModelSpace.getY();
     }
     
-    public Point2D viewportCoordsFromModelCoords(Point2D modelCoords) {
+    public Point2D.Double viewportCoordsFromModelCoords(Point2D.Double modelCoords) {
         double modelX = modelCoords.getX();
         double viewportLeftInModelSpace = viewportBottomLeftInModelSpace.getX();
         double viewportX = ( modelX - viewportLeftInModelSpace ) / viewportWidthInModelSpace() * viewportWidth;
@@ -47,7 +47,7 @@ public class SDCTransform {
         double viewportTopInModelSpace = viewportTopRightInModelSpace.getY();
         double viewportY = ( viewportTopInModelSpace - modelY ) / viewportHeightInModelSpace() * viewportHeight;
         
-        Point2D viewportCoords = new Point2D( viewportX, viewportY ) ;
+        Point2D.Double viewportCoords = new Point2D.Double( viewportX, viewportY ) ;
 
         return viewportCoords;
     }
@@ -55,7 +55,7 @@ public class SDCTransform {
     public Point2D modelCoordsFromViewportCoords( Point2D viewportPoint ) {
         double modelX = viewportWidthInModelSpace() * viewportPoint.getX() / viewportWidth + viewportBottomLeftInModelSpace.getX();
         double modelY = -viewportHeightInModelSpace() * viewportPoint.getY() / viewportHeight +  viewportTopRightInModelSpace.getY();
-        return new Point2D(modelX, modelY);
+        return new Point2D.Double(modelX, modelY);
     }
     
     private double getScale() {
@@ -72,7 +72,7 @@ public class SDCTransform {
     
     static SDCTransform buildScaleTransform(GeoExtents geoExtents, double viewPortWidth, double viewPortHeight) {
         // Get extra space from preferences
-        double extraSpaceInViewport = sodickdxfcoderui.SodickDxfCoderPreferences.getInstance().getExtraSpaceInViewport();
+        double extraSpaceInViewport = sodickdxfcoderui.SodickDxfCoderFXPreferences.getInstance().getExtraSpaceInViewport();
         
         // Find out how much space needed in x and y
         double viewPortHeightInModelSpace = geoExtents.getHeightWithOriginIncluded() * extraSpaceInViewport;
@@ -92,15 +92,15 @@ public class SDCTransform {
         double viewportBottom = midPointY - viewPortHeightInModelSpace * scaleY / scale / 2;
         double viewportTop = viewportBottom + viewPortHeightInModelSpace * scaleY/ scale;
 
-        Point2D viewportBottomLeft = new Point2D( viewportLeft, viewportBottom);
+        Point2D.Double viewportBottomLeft = new Point2D.Double( viewportLeft, viewportBottom);
                 
-        Point2D viewportTopRight = new Point2D( viewportRight, viewportTop );
+        Point2D.Double viewportTopRight = new Point2D.Double( viewportRight, viewportTop );
 
         return new SDCTransform(viewportBottomLeft, viewportTopRight, viewPortWidth, viewPortHeight );
     }
 
     public void zoomOnOrigo( double zoomFactor ) {
-        zoom( viewportCoordsFromModelCoords(new Point2D(0,0)), zoomFactor);
+        zoom( viewportCoordsFromModelCoords(new Point2D.Double(0,0)), zoomFactor);
     }
     
     public void zoom( Point2D zoomCenterInViewportCoords, double zoomFactor ) {
@@ -120,8 +120,8 @@ public class SDCTransform {
         xTopRight = (xTopRight - zoomCenterX ) * zoomFactor + zoomCenterX;
         yTopRight = (yTopRight - zoomCenterY ) * zoomFactor + zoomCenterY;
         
-        viewportBottomLeftInModelSpace = new Point2D(xBottomLeft, yBottomLeft);
-        viewportTopRightInModelSpace = new Point2D(xTopRight, yTopRight);
+        viewportBottomLeftInModelSpace = new Point2D.Double(xBottomLeft, yBottomLeft);
+        viewportTopRightInModelSpace = new Point2D.Double(xTopRight, yTopRight);
     }
 
     void pan(Point2D panStartPoint, Point2D panEndPoint) {
@@ -136,7 +136,7 @@ public class SDCTransform {
         double xTopRight = viewportTopRightInModelSpace.getX() - distanceX;
         double yTopRight = viewportTopRightInModelSpace.getY() - distanceY;
         
-        viewportBottomLeftInModelSpace = new Point2D(xBottomLeft, yBottomLeft);
-        viewportTopRightInModelSpace = new Point2D(xTopRight, yTopRight);
+        viewportBottomLeftInModelSpace = new Point2D.Double(xBottomLeft, yBottomLeft);
+        viewportTopRightInModelSpace = new Point2D.Double(xTopRight, yTopRight);
     }
 }

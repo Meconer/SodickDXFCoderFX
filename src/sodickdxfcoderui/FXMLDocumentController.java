@@ -22,7 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
+import java.awt.geom.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -160,7 +160,7 @@ public class FXMLDocumentController implements Initializable {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("DXF-filer", "*.dxf"));
-        File initialDirectory = new File(SodickDxfCoderPreferences.getInstance().getDefaultDirectory());
+        File initialDirectory = new File(SodickDxfCoderFXPreferences.getInstance().getDefaultDirectory());
         fc.setInitialDirectory(initialDirectory);
         File fileToOpen = fc.showOpenDialog(null);
         if (fileToOpen != null) {
@@ -175,7 +175,8 @@ public class FXMLDocumentController implements Initializable {
         Path chosenDirectory = fileToOpen.toPath().getParent();
         String chosenDirectoryString = chosenDirectory.toString();
         System.out.println("chosenDirectoryString: " + chosenDirectoryString);
-        SodickDxfCoderPreferences.getInstance().setDefaultDirectory(chosenDirectory.toString());
+        SodickDxfCoderFXPreferences.getInstance().setDefaultDirectory(chosenDirectory.toString());
+        SodickDxfCoderFXPreferences.getInstance().setCurrentFileName(Util.stripExtension(fileToOpen.getName()));
 
         // Open the file
         if (geoModel.openDxfFile(fileToOpen)) {
@@ -248,7 +249,7 @@ public class FXMLDocumentController implements Initializable {
     private void setupMouseClickHandler() {
         graphicsPane.setOnMouseClicked((MouseEvent event) -> {
             Platform.runLater(() -> {
-                Point2D viewportPoint = new Point2D(event.getX(), event.getY());
+                Point2D viewportPoint = new Point2D.Double(event.getX(), event.getY());
                 
                 Point2D modelPoint = geoModel.getModelCoordsFromViewpointCoords( viewportPoint );
                 System.out.println("Mouse clicked at : " + modelPoint.getX() + " : " + modelPoint.getY());
@@ -257,9 +258,9 @@ public class FXMLDocumentController implements Initializable {
         
         graphicsPane.setOnMousePressed((event) -> {
             mousePanningGoingOn = true;
-            panStartPoint = new Point2D(event.getX(), event.getY());
+            panStartPoint = new Point2D.Double(event.getX(), event.getY());
             Platform.runLater(() -> {
-                Point2D viewportPoint = new Point2D(event.getX(), event.getY());
+                Point2D viewportPoint = new Point2D.Double(event.getX(), event.getY());
                 Point2D modelPoint = geoModel.getModelCoordsFromViewpointCoords( viewportPoint );
                 System.out.println("Mouse pressed at : " + viewportPoint.getX() + " : " + viewportPoint.getY());
             });
@@ -268,12 +269,12 @@ public class FXMLDocumentController implements Initializable {
         graphicsPane.setOnMouseDragged((event) -> {
             if ( mousePanningGoingOn ) {
                 graphicsPane.setCursor(Cursor.CLOSED_HAND);
-                Point2D currentPanPoint = new Point2D(event.getX(), event.getY());
+                Point2D.Double currentPanPoint = new Point2D.Double(event.getX(), event.getY());
                 Platform.runLater(() -> {
                     geoModel.pan( panStartPoint, currentPanPoint );
                     geoModel.plotOnPane(graphicsPane);
                     panStartPoint = currentPanPoint;
-                    Point2D viewportPoint = new Point2D(event.getX(), event.getY());
+                    Point2D viewportPoint = new Point2D.Double(event.getX(), event.getY());
                     System.out.println("Mouse moved to : " + viewportPoint.getX() + " : " + viewportPoint.getY());
                 });
             }
@@ -281,13 +282,13 @@ public class FXMLDocumentController implements Initializable {
         
         graphicsPane.setOnMouseReleased((event) -> {
             if ( mousePanningGoingOn ) {
-                Point2D currentPanPoint = new Point2D(event.getX(), event.getY());
+                Point2D currentPanPoint = new Point2D.Double(event.getX(), event.getY());
                 mousePanningGoingOn = false;
                 graphicsPane.setCursor(Cursor.DEFAULT);
                 Platform.runLater(() -> {
                     geoModel.pan( panStartPoint, currentPanPoint );
                     geoModel.plotOnPane(graphicsPane);
-                    Point2D viewportPoint = new Point2D(event.getX(), event.getY());
+                    Point2D viewportPoint = new Point2D.Double(event.getX(), event.getY());
                     Point2D modelPoint = geoModel.getModelCoordsFromViewpointCoords( viewportPoint );
                     System.out.println("Mouse released at : " + viewportPoint.getX() + " : " + viewportPoint.getY());
                 });

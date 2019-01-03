@@ -5,6 +5,7 @@
  */
 package geometryclasses;
 
+import UtilPkg.Util;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import javafx.geometry.Point2D;
+import java.awt.geom.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -30,9 +31,10 @@ public class GeometryModel {
     private ChainList chainList = null;
     private SDCTransform sdcTransform;
     private List<Integer> selectedIndices = new LinkedList<>();
+    private String cncCodeFileName;
 
     public void zoom(double zoomFactor, Pane pane, double zoomCenterX, double zoomCenterY ) {
-        sdcTransform.zoom( new Point2D(zoomCenterX, zoomCenterY), zoomFactor);
+        sdcTransform.zoom( new Point2D.Double(zoomCenterX, zoomCenterY), zoomFactor);
         plotOnPane(pane);
     }
     
@@ -168,6 +170,7 @@ public class GeometryModel {
             Utilities.showAlert("Kan inte läsa filen\n" + ex.getMessage());
             return false;
         }
+        cncCodeFileName = Util.stripExtension( fileToOpen.getName() );
         return true;
     }
 

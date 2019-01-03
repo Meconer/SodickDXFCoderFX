@@ -8,7 +8,7 @@ import javafx.scene.canvas.Canvas;
 public abstract class SDCGeometricEntity {
 
     public Point2D.Double getSecondPoint() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new Point2D.Double(getX2(), getY2());
     }
 
     public enum GeometryType {
