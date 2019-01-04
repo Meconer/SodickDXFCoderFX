@@ -16,10 +16,11 @@ import java.util.stream.Collectors;
  *
  * @author Mats Andersson <mats.andersson@mecona.se>
  */
-public class StraightCoder {
+public class AngleCoder {
 
     private double lastX;
     private double lastY;
+
 
     public enum CompensationType {
         g41, g42, g40
@@ -30,11 +31,20 @@ public class StraightCoder {
         oneCut, sixCuts
     };
     private final NoOfCuts noOfCuts;
+    
+    public enum LeanSide {
+        leanLeft, leanRight
+    }
+    private LeanSide leanSide;
 
     public enum MoveType {
         g00, g01, g02, g03
     }
     private MoveType lastMoveType;
+    
+    private String zLevelProgramString;
+    private String zLevelLowerString;
+    private String leanAngleString;
 
     private boolean useM199;
 
@@ -42,9 +52,13 @@ public class StraightCoder {
     private Point2D.Double chainSecondPoint;
     private Point2D.Double chainStartPoint;
 
-    public StraightCoder(CompensationType compensationType, NoOfCuts noOfCuts, boolean useM199) {
+    public AngleCoder(CompensationType compensationType, NoOfCuts noOfCuts, LeanSide leanSide, String zLevelProgramString, String zLevelLowerString, String leanAngleString, boolean useM199) {
         this.compensationType = compensationType;
         this.noOfCuts = noOfCuts;
+        this.leanSide = leanSide;
+        this.zLevelProgramString = zLevelProgramString;
+        this.zLevelLowerString = zLevelLowerString;
+        this.leanAngleString = leanAngleString;
         this.useM199 = useM199;
     }
 
@@ -58,9 +72,9 @@ public class StraightCoder {
     }
 
     private void addStartCode(StringBuilder cncProgramString) {
-        String startCodeFileName = "straight1.txt";
+        String startCodeFileName = "angle1.txt";
         if (noOfCuts == NoOfCuts.sixCuts) {
-            startCodeFileName = "straight6.txt";
+            startCodeFileName = "angle6.txt";
         }
         cncProgramString.append(getResourceFileAsString(startCodeFileName));
         cncProgramString.append("\n");
@@ -82,14 +96,18 @@ public class StraightCoder {
 
     private void addCutCode(StringBuilder cncProgramString) {
         // Next write start point info and G92
+        cncProgramString.append( "TP" );
+        addWithEndOfLine(cncProgramString, zLevelProgramString);
+        cncProgramString.append( "TN"  );
+        addWithEndOfLine(cncProgramString, zLevelLowerString );
 
         cncProgramString.append("G92 ");
         cncProgramString.append( buildCoord(chainStartPoint, true) );
-        addWithEndOfLine(cncProgramString, " Z0");
-        addWithEndOfLine(cncProgramString, "G29");
-        addWithEndOfLine(cncProgramString, "T94");
-        addWithEndOfLine(cncProgramString, "T84");
-        addWithEndOfLine(cncProgramString, "C000");
+        cncProgramString.append(" Z0;\n");
+        cncProgramString.append("G29\n");
+        cncProgramString.append("T94\n");
+        cncProgramString.append("T84\n");
+        cncProgramString.append("C000\n");
 
         String compensationSideString = "G40";
         String revCompensationSideString = "G40";
@@ -101,64 +119,91 @@ public class StraightCoder {
             compensationSideString = "G42";
             revCompensationSideString = "G41";
         }
-        cncProgramString.append(compensationSideString);
-        cncProgramString.append(" H000 G01 ");
-        addWithEndOfLine(cncProgramString, buildCoord(chainSecondPoint, true) );
+        
+        
+        String angularDirString = "G51";
+        String angularRevDirString = "G52";
+        if (leanSide == LeanSide.leanRight) {
+            angularDirString = "G52";
+            angularRevDirString = "G51";
+        }
 
-        addWithEndOfLine(cncProgramString, "H001 C001");
-        addWithEndOfLine(cncProgramString, "M98 P0001");
-        addWithEndOfLine(cncProgramString, "T85");
-        addWithEndOfLine(cncProgramString, "G149 G249");
+        cncProgramString.append(angularDirString );
+        cncProgramString.append(" A0 ");
+        cncProgramString.append(compensationSideString);
+        cncProgramString.append( " H000 G01 "  );
+        addWithEndOfLine(cncProgramString, buildCoord(chainSecondPoint, true) );
+        
+        cncProgramString.append("A");
+        addWithEndOfLine( cncProgramString, leanAngleString );
+
+        addWithEndOfLine( cncProgramString, "H001 C001");
+        addWithEndOfLine( cncProgramString, "M98 P0001");
+        addWithEndOfLine( cncProgramString, "T85");
+        addWithEndOfLine( cncProgramString, "G149 G249");
 
         if (noOfCuts == NoOfCuts.sixCuts) {
-            addWithEndOfLine(cncProgramString, "C002;\n");
+            
+            addWithEndOfLine( cncProgramString, "C002");
 
+            cncProgramString.append(angularRevDirString);
+            cncProgramString.append(" A0 ");
             cncProgramString.append(revCompensationSideString);
             cncProgramString.append(" H000 G01 ");
-            addWithEndOfLine(cncProgramString, buildCoord(chainNextToLastPoint, true));
+            addWithEndOfLine(cncProgramString, buildCoord(chainNextToLastPoint, true) );
+            
+            cncProgramString.append("A");
+            addWithEndOfLine( cncProgramString, leanAngleString );
 
-            addWithEndOfLine(cncProgramString, "H002");
-            addWithEndOfLine(cncProgramString, "M98 P0002");
-            addWithEndOfLine(cncProgramString, "C900");
+            addWithEndOfLine( cncProgramString, "H002");
+            addWithEndOfLine( cncProgramString, "M98 P0002");
+            addWithEndOfLine( cncProgramString, "C900");
 
+            cncProgramString.append(angularDirString);
+            cncProgramString.append(" A0 ");
             cncProgramString.append(compensationSideString);
-            cncProgramString.append(" H000 G01 ");
-            addWithEndOfLine(cncProgramString, buildCoord(chainSecondPoint, true));
+            cncProgramString.append(" ");
+            addWithEndOfLine( cncProgramString, buildCoord(chainSecondPoint, true));
 
-            addWithEndOfLine(cncProgramString, "H003");
-            addWithEndOfLine(cncProgramString, "M98 P0001");
-            addWithEndOfLine(cncProgramString, "C901");
+            addWithEndOfLine( cncProgramString, "H003");
+            addWithEndOfLine( cncProgramString, "M98 P0001");
+            addWithEndOfLine( cncProgramString, "C901");
 
+            cncProgramString.append(angularRevDirString);
+            cncProgramString.append(" A0 ");
             cncProgramString.append(revCompensationSideString);
-            cncProgramString.append(" H000 G01 ");
-            addWithEndOfLine(cncProgramString, buildCoord(chainNextToLastPoint, true));
+            cncProgramString.append(" ");
+            addWithEndOfLine( cncProgramString, buildCoord(chainNextToLastPoint, true));
 
-            addWithEndOfLine(cncProgramString, "H004");
-            addWithEndOfLine(cncProgramString, "M98 P0002");
+            addWithEndOfLine( cncProgramString, "H004");
+            addWithEndOfLine( cncProgramString, "M98 P0002");
+            addWithEndOfLine( cncProgramString, "C902");
 
-            addWithEndOfLine(cncProgramString, "C902");
-
+            cncProgramString.append(angularDirString);
+            cncProgramString.append(" A0 ");
             cncProgramString.append(compensationSideString);
-            cncProgramString.append(" H000 G01 ");
-            addWithEndOfLine(cncProgramString, buildCoord(chainSecondPoint, true));
+            cncProgramString.append(" ");
+            addWithEndOfLine( cncProgramString, buildCoord(chainSecondPoint, true));
 
-            addWithEndOfLine(cncProgramString, "H005");
-            addWithEndOfLine(cncProgramString, "M98 P0001");
+            addWithEndOfLine( cncProgramString, "H005");
+            addWithEndOfLine( cncProgramString, "M98 P0001");
 
-            addWithEndOfLine(cncProgramString, "C903");
+            addWithEndOfLine( cncProgramString, "C903");
 
+            cncProgramString.append(angularRevDirString);
+            cncProgramString.append(" A0 ");
             cncProgramString.append(revCompensationSideString);
-            cncProgramString.append(" H000 G01 ");
-            addWithEndOfLine(cncProgramString, buildCoord(chainNextToLastPoint, true));
+            cncProgramString.append(" ");
+            addWithEndOfLine( cncProgramString, buildCoord(chainNextToLastPoint, true));
 
-            addWithEndOfLine(cncProgramString, "H006");
-            addWithEndOfLine(cncProgramString, "M98 P0002");
+            addWithEndOfLine( cncProgramString, "H006");
+            addWithEndOfLine( cncProgramString, "M98 P0002");
         }
 
         if (useM199) {
-            addWithEndOfLine(cncProgramString, "M199");
+            addWithEndOfLine( cncProgramString, "M199");
         } else {
-            addWithEndOfLine(cncProgramString, "M02");
+            addWithEndOfLine( cncProgramString, "M02");
         }
     }
 
@@ -280,7 +325,7 @@ public class StraightCoder {
      * @return the file's contents or null if the file could not be opened
      */
     public String getResourceFileAsString(String fileName) {
-        InputStream is = StraightCoder.class.getResourceAsStream(fileName);
+        InputStream is = AngleCoder.class.getResourceAsStream(fileName);
         if (is != null) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             return reader.lines().collect(Collectors.joining(System.lineSeparator()));

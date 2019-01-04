@@ -1,18 +1,11 @@
 package codingPkg;
 
 import UtilPkg.Util;
-import static UtilPkg.Util.reportError;
 import codingPkg.StraightCoder.CompensationType;
 import codingPkg.StraightCoder.NoOfCuts;
 import geometryclasses.Chain;
 import geometryclasses.GeometryModel;
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,7 +15,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import sodickdxfcoderui.SodickDxfCoderFXPreferences;
 
@@ -104,7 +96,7 @@ public class CodeStraightDialogController implements Initializable {
             String cncProgram = straightCoder.buildCode( chainToCode );
             String fileName = SodickDxfCoderFXPreferences.getInstance().getCurrentFileName() + ".nc";
             
-            saveToFile(cncProgram, fileName );
+            Util.saveToFile(cncProgram, fileName );
             closeAction(event);
         }
     }
@@ -124,26 +116,5 @@ public class CodeStraightDialogController implements Initializable {
         this.geoModel = geoModel;
     }
 
-    private void saveToFile(String cncProgram, String fileName) {
-        FileChooser fc = new FileChooser();
-        fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("CNC-filer", "*.nc"));
-        String initialDirectory = 
-                SodickDxfCoderFXPreferences.getInstance()
-                        .getDefaultDirectory();
-        
-        fc.setInitialFileName(fileName);
-        fc.setInitialDirectory( new File(initialDirectory));
-        File saveFile = fc.showSaveDialog( null );
-        if ( saveFile != null ) {
-            try {
-                Path path = Paths.get(saveFile.getAbsolutePath());
-                if ( Files.exists(path, LinkOption.NOFOLLOW_LINKS));
-                               Files.write( path, cncProgram.getBytes() );
-            } catch (IOException ex) {
-                reportError("Kan inte spara filen");
-            }
-        }
-    }
 
 }

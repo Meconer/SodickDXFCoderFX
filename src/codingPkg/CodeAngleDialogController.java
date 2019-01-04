@@ -1,18 +1,12 @@
 package codingPkg;
 
 import UtilPkg.Util;
-import static UtilPkg.Util.reportError;
-import codingPkg.StraightCoder.CompensationType;
-import codingPkg.StraightCoder.NoOfCuts;
+import codingPkg.AngleCoder.LeanSide;
+import codingPkg.AngleCoder.CompensationType;
+import codingPkg.AngleCoder.NoOfCuts;
 import geometryclasses.Chain;
 import geometryclasses.GeometryModel;
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,9 +15,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import sodickdxfcoderui.SodickDxfCoderFXPreferences;
+import sodickdxfcoderui.SodickDxfCoderFXPreferences;
 import sodickdxfcoderui.SodickDxfCoderFXPreferences;
 
 /**
@@ -46,9 +42,22 @@ public class CodeAngleDialogController implements Initializable {
     
     @FXML
     private CheckBox m199CheckBox;
+    
+    @FXML
+    private TextField zProgramLevelTextField;
+    @FXML
+    private TextField zLowerLevelTextField;
+    @FXML
+    private TextField angleTextField;
+    
+    @FXML
+    private RadioButton leanLeftRadioButton;
+    @FXML
+    private RadioButton leanRightRadioButton;
+    
 
     @FXML
-    private Button codeStraightButton;
+    private Button codeAngleButton;
     @FXML
     private Button closeButton;
     private GeometryModel geoModel;
@@ -65,10 +74,15 @@ public class CodeAngleDialogController implements Initializable {
         oneCutRadioButton.setToggleGroup(numberOfCutsToggleGroup);
         sixCutsRadioButton.setToggleGroup(numberOfCutsToggleGroup);
         sixCutsRadioButton.setSelected(true);
+        
+        ToggleGroup leanSideToggleGroup = new ToggleGroup();
+        leanLeftRadioButton.setToggleGroup(leanSideToggleGroup);
+        leanRightRadioButton.setToggleGroup(leanSideToggleGroup);
+        leanLeftRadioButton.setSelected(true);
     }
 
     @FXML
-    private void codeStraightAction(ActionEvent event) {
+    private void codeAngleAction(ActionEvent event) {
         if ( geoModel == null ) {
             Util.reportError("Ingen geometri");
             return;
@@ -79,7 +93,7 @@ public class CodeAngleDialogController implements Initializable {
             return;
         }
         
-        System.out.println("Code Straight Action");
+        System.out.println("Code Angle Action");
         CompensationType compensationType = CompensationType.g40;
         if (g41RadioButton.isSelected()) {
             compensationType = CompensationType.g41;
@@ -92,19 +106,36 @@ public class CodeAngleDialogController implements Initializable {
         if (sixCutsRadioButton.isSelected()) {
             noOfCuts = NoOfCuts.sixCuts;
         }
+        
+        LeanSide leanSide = LeanSide.leanLeft;
+        if ( leanRightRadioButton.isSelected() ) leanSide = LeanSide.leanRight;
 
-
-            
-        StraightCoder straightCoder = new StraightCoder(compensationType, noOfCuts, m199CheckBox.isSelected() );
+        String zLevelProgramString = Util.convertToDecimal( zProgramLevelTextField.getText(), "Z-nivå program felaktig" );
+        if (zLevelProgramString.contains(Util.ERROR_STRING)) return;
+        
+        String zLevelLowerString = Util.convertToDecimal( zLowerLevelTextField.getText(), "Z-nivå nedre felaktig" );
+        if (zLevelLowerString.contains(Util.ERROR_STRING)) return;
+        
+        String leanAngleString = Util.convertToDecimal( angleTextField.getText(), "Lutningsvinkel felaktig" );
+        if (leanAngleString.contains(Util.ERROR_STRING)) return;
+        
+        AngleCoder angleCoder = new AngleCoder(
+                compensationType,
+                noOfCuts,
+                leanSide,
+                zLevelProgramString,
+                zLevelLowerString,
+                leanAngleString,
+                m199CheckBox.isSelected() );
        
         if (geoModel.getNumberOfSelectedLinks() != 1) {
             Util.reportError("Välj en kedja");
         } else {
             Chain chainToCode = geoModel.getSelectedLinks().get(0);
-            String cncProgram = straightCoder.buildCode( chainToCode );
+            String cncProgram = angleCoder.buildCode( chainToCode );
             String fileName = SodickDxfCoderFXPreferences.getInstance().getCurrentFileName() + ".nc";
             
-            saveToFile(cncProgram, fileName );
+            Util.saveToFile(cncProgram, fileName );
             closeAction(event);
         }
     }
@@ -124,26 +155,5 @@ public class CodeAngleDialogController implements Initializable {
         this.geoModel = geoModel;
     }
 
-    private void saveToFile(String cncProgram, String fileName) {
-        FileChooser fc = new FileChooser();
-        fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("CNC-filer", "*.nc"));
-        String initialDirectory = 
-                SodickDxfCoderFXPreferences.getInstance()
-                        .getDefaultDirectory();
-        
-        fc.setInitialFileName(fileName);
-        fc.setInitialDirectory( new File(initialDirectory));
-        File saveFile = fc.showSaveDialog( null );
-        if ( saveFile != null ) {
-            try {
-                Path path = Paths.get(saveFile.getAbsolutePath());
-                if ( Files.exists(path, LinkOption.NOFOLLOW_LINKS));
-                               Files.write( path, cncProgram.getBytes() );
-            } catch (IOException ex) {
-                reportError("Kan inte spara filen");
-            }
-        }
-    }
 
 }

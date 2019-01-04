@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sodickdxfcoderui;
 
+import codingPkg.CodeAngleDialogController;
 import UtilPkg.Util;
 import codingPkg.CodeStraightDialogController;
 import geometryclasses.GeometryModel;
@@ -106,8 +102,26 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void menuCodeAngleAction(ActionEvent event) {
+    private void menuCodeAngleAction(ActionEvent event) throws IOException {
         System.out.println("Menu Code Angle");
+        System.out.println(CodeAngleDialogController.class);
+        FXMLLoader fXMLLoader = new FXMLLoader(CodeAngleDialogController.class.getResource("CodeAngleDialog.fxml"));
+        Parent codeAngleDialogParent = fXMLLoader.load();
+        CodeAngleDialogController codeAngleDialogController = fXMLLoader.getController();
+        
+        codeAngleDialogController.initModel( geoModel );
+        
+        if ( geoModel.getNumberOfSelectedLinks()== 0 ) {
+            Util.reportError("Ingen kedja vald");
+            return;
+        }
+
+        Scene codeAngleDialogScene = new Scene(codeAngleDialogParent);
+        
+        Stage angleDialogStage = new Stage();
+              
+        angleDialogStage.setScene(codeAngleDialogScene);
+        angleDialogStage.showAndWait();
     }
 
     @FXML
