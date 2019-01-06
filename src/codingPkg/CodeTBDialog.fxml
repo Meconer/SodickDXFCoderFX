@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="404.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="codingPkg.CodeTBDialogController">
+   <children>
+      <VBox prefHeight="404.0" prefWidth="186.0" spacing="20.0">
+         <children>
+            <GridPane>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <RadioButton fx:id="g41RadioButton" mnemonicParsing="false" text="G41">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </RadioButton>
+                  <RadioButton fx:id="g42RadioButton" mnemonicParsing="false" text="G42" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </RadioButton>
+                  <RadioButton fx:id="g40RadioButton" mnemonicParsing="false" prefHeight="37.0" prefWidth="62.0" text="G40" GridPane.rowIndex="2">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </RadioButton>
+               </children>
+            </GridPane>
+            <GridPane>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <RadioButton fx:id="oneCutRadioButton" mnemonicParsing="false" text="1 snitt">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </RadioButton>
+                  <RadioButton fx:id="sixCutsRadioButton" mnemonicParsing="false" text="6 snitt" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </RadioButton>
+               </children>
+            </GridPane>
+            <CheckBox fx:id="m199CheckBox" mnemonicParsing="false" text="M199" />
+            <VBox alignment="TOP_CENTER" spacing="30.0">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+      <VBox layoutX="196.0" prefHeight="404.0" prefWidth="220.0" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="Z-nivå program" />
+            <TextField fx:id="zProgramLevelTextField" text="29.8" />
+            <Label text="Z-nivå nedre">
+               <padding>
+                  <Insets top="10.0" />
+               </padding></Label>
+            <TextField fx:id="zLowerLevelTextField" text="27.8" />
+            <Label text="Toppkedja">
+               <padding>
+                  <Insets top="20.0" />
+               </padding></Label>
+            <ChoiceBox fx:id="topChainChoiceBox" prefHeight="25.0" prefWidth="188.0" />
+            <AnchorPane prefHeight="158.0" prefWidth="180.0">
+               <children>
+                  <Button fx:id="codeAngleButton" contentDisplay="TOP" layoutX="42.0" layoutY="54.0" mnemonicParsing="false" onAction="#codeAngleAction" prefHeight="25.0" prefWidth="97.0" text="Skapa program" />
+                  <Button fx:id="closeButton" layoutX="57.0" layoutY="107.0" mnemonicParsing="false" onAction="#closeAction" prefHeight="25.0" prefWidth="66.0" text="Stäng" />
+               </children>
+            </AnchorPane>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

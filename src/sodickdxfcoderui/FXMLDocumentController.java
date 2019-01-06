@@ -1,5 +1,6 @@
 package sodickdxfcoderui;
 
+import codingPkg.CodeTBDialogController;
 import codingPkg.CodeAngleDialogController;
 import UtilPkg.Util;
 import codingPkg.CodeStraightDialogController;
@@ -125,8 +126,26 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void menuCodeTBAction(ActionEvent event) {
+    private void menuCodeTBAction(ActionEvent event) throws IOException {
         System.out.println("Menu CodeTB");
+        System.out.println(CodeTBDialogController.class);
+        FXMLLoader fXMLLoader = new FXMLLoader(CodeTBDialogController.class.getResource("CodeTBDialog.fxml"));
+        Parent codeTBDialogParent = fXMLLoader.load();
+        CodeTBDialogController codeTBDialogController = fXMLLoader.getController();
+        
+        codeTBDialogController.initModel( geoModel );
+        
+        if ( geoModel.getNumberOfSelectedLinks() != 2 ) {
+            Util.reportError("Du måste välja 2 kedjor");
+            return;
+        }
+
+        Scene codeTBDialogScene = new Scene(codeTBDialogParent);
+        
+        Stage tbDialogStage = new Stage();
+              
+        tbDialogStage.setScene(codeTBDialogScene);
+        tbDialogStage.showAndWait();
     }
     
     @FXML
