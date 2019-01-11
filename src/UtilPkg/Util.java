@@ -1,5 +1,6 @@
 package UtilPkg;
 
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,7 +11,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import javafx.scene.control.Alert;
-import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import sodickdxfcoderui.SodickDxfCoderFXPreferences;
 
@@ -74,5 +74,12 @@ public class Util {
         }
 
         return result;
+    }
+    
+    public static Point2D.Double distanceBetweenPoints( Point2D.Double p1, Point2D.Double p2 ) {
+        return new Point2D.Double(
+                p1.getX() - p2.getX(),
+                p1.getY() - p2.getY()
+        );
     }
 }

@@ -52,6 +52,7 @@ public class GeometryModel {
     }
 
     public int getNoOfChains() {
+        if ( chainList == null ) return 0;
         return chainList.getSize();
     }
 

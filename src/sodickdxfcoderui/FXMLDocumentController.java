@@ -89,8 +89,8 @@ public class FXMLDocumentController implements Initializable {
         
         codeStraightDialogController.initModel( geoModel );
         
-        if ( geoModel.getNumberOfSelectedLinks()== 0 ) {
-            Util.reportError("Ingen kedja vald");
+        if ( geoModel.getNumberOfSelectedLinks()!= 1 ) {
+            Util.reportError("Du måste välja en länk");
             return;
         }
 
@@ -112,8 +112,8 @@ public class FXMLDocumentController implements Initializable {
         
         codeAngleDialogController.initModel( geoModel );
         
-        if ( geoModel.getNumberOfSelectedLinks()== 0 ) {
-            Util.reportError("Ingen kedja vald");
+        if ( geoModel.getNumberOfSelectedLinks()!= 1 ) {
+            Util.reportError("Du måste välja en länk");
             return;
         }
 
@@ -136,7 +136,7 @@ public class FXMLDocumentController implements Initializable {
         codeTBDialogController.initModel( geoModel );
         
         if ( geoModel.getNumberOfSelectedLinks() != 2 ) {
-            Util.reportError("Du måste välja 2 kedjor");
+            Util.reportError("Du måste välja 2 länkar");
             return;
         }
 
@@ -223,7 +223,7 @@ public class FXMLDocumentController implements Initializable {
         int noOfChains = geoModel.getNoOfChains();
         chainListView.getItems().clear();
         for ( int i = 0 ; i < noOfChains ; i++ ) {
-            chainListView.getItems().add(("Kedja " + (i+1)));
+            chainListView.getItems().add(("Länk " + (i+1)));
         }
     }
 
