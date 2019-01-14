@@ -325,7 +325,11 @@ public class TBCoder {
                 } else {
                     cncProgramString.append(buildMove(MoveType.g03, true));
                 }
-                cncProgramString.append(buildCoord(sdcArc.getSecondPoint(), false, lastTopPoint));
+                cncProgramString.append(
+                        buildCoord(
+                                Util.distanceBetweenPoints(sdcArc.getSecondPoint(),deltaTopToBottom),
+                                false,
+                                lastTopPoint));
                 cncProgramString.append(" ");
                 addWithEndOfLine(cncProgramString, buildIJ(sdcArc));
             }
@@ -336,7 +340,12 @@ public class TBCoder {
         }
         addWithEndOfLine(cncProgramString, "G140");
         addWithEndOfLine(cncProgramString,
-                buildCoord(geo.getSecondPoint(), false, lastBottomPoint));
+                buildCoord(
+                        Util.distanceBetweenPoints( geo.getSecondPoint(), deltaTopToBottom ),
+                        false,
+                        lastBottomPoint
+                )
+        );
         addWithEndOfLine(cncProgramString, "M99");
     }
 
