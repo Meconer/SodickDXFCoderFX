@@ -118,11 +118,15 @@ public class TBCoder {
 
         cncProgramString.append("G92 ");
         cncProgramString.append( buildCoord(bottomChainStartPoint, true, lastBottomPoint ) );
-        cncProgramString.append(" U0 V0 Z0;\n");
-        cncProgramString.append("G29\n");
-        cncProgramString.append("T94\n");
-        cncProgramString.append("T84\n");
-        cncProgramString.append("C000\n");
+        
+        addWithEndOfLine(cncProgramString, " U0 V0 Z0");
+        addWithEndOfLine(cncProgramString, "G29");
+        addWithEndOfLine(cncProgramString, "T94");
+        addWithEndOfLine(cncProgramString, "T84");
+        
+        addWithEndOfLine(cncProgramString, "");
+        addWithEndOfLine(cncProgramString, "(SNITT 1)");
+        addWithEndOfLine(cncProgramString, "C000");
 
         String compensationSideString = "G140";
         String revCompensationSideString = "G140";
@@ -146,7 +150,9 @@ public class TBCoder {
         addWithEndOfLine(cncProgramString, 
                 buildCoord( Util.distanceBetweenPoints(topChainSecondPoint, deltaTopToBottom) ,
                         true,
-                        lastTopPoint));
+                        lastTopPoint
+                )
+        );
         
         addWithEndOfLine( cncProgramString, "H001 C001");
         addWithEndOfLine( cncProgramString, "M98 P0001");
@@ -155,6 +161,8 @@ public class TBCoder {
 
         if (noOfCuts == NoOfCuts.sixCuts) {
             
+            addWithEndOfLine(cncProgramString, "");
+            addWithEndOfLine(cncProgramString, "(SNITT 2)");
             addWithEndOfLine( cncProgramString, "C002");
 
             cncProgramString.append(revCompensationSideString);
@@ -164,12 +172,18 @@ public class TBCoder {
             cncProgramString.append(buildCoord(bottomChainNextToLastPoint, true, lastBottomPoint));
             cncProgramString.append(" : G01 ");
             addWithEndOfLine(cncProgramString, 
-                    buildCoord(topChainNextToLastPoint, true, lastTopPoint) );
+                    buildCoord(
+                            Util.distanceBetweenPoints(topChainNextToLastPoint, deltaTopToBottom),
+                            true,
+                            lastTopPoint
+                    ) 
+            );
             
             addWithEndOfLine( cncProgramString, "H002");
             addWithEndOfLine( cncProgramString, "M98 P0002");
 
-
+            addWithEndOfLine(cncProgramString, "");
+            addWithEndOfLine(cncProgramString, "(SNITT 3)");
             addWithEndOfLine( cncProgramString, "C900");
             cncProgramString.append(compensationSideString);
             addWithEndOfLine(cncProgramString, " H000");
@@ -178,9 +192,18 @@ public class TBCoder {
             cncProgramString.append(buildCoord(bottomChainSecondPoint, true, lastBottomPoint));
             cncProgramString.append(" : G01 ");
             addWithEndOfLine(cncProgramString, 
-                    buildCoord(topChainNextToLastPoint, true, lastTopPoint) );
+                    buildCoord(
+                            Util.distanceBetweenPoints(topChainSecondPoint, deltaTopToBottom),
+                            true,
+                            lastTopPoint
+                    ) 
+            );
             
+            addWithEndOfLine( cncProgramString, "H003");
+            addWithEndOfLine( cncProgramString, "M98 P0001");
 
+            addWithEndOfLine(cncProgramString, "");
+            addWithEndOfLine(cncProgramString, "(SNITT 4)");
             addWithEndOfLine( cncProgramString, "C901");
 
             cncProgramString.append(revCompensationSideString);
@@ -190,12 +213,18 @@ public class TBCoder {
             cncProgramString.append(buildCoord(bottomChainNextToLastPoint, true, lastBottomPoint));
             cncProgramString.append(" : G01 ");
             addWithEndOfLine(cncProgramString, 
-                    buildCoord(topChainNextToLastPoint, true, lastTopPoint) );
+                    buildCoord(
+                            Util.distanceBetweenPoints(topChainNextToLastPoint, deltaTopToBottom),
+                            true,
+                            lastTopPoint
+                    ) 
+            );
             
-            addWithEndOfLine( cncProgramString, "H002");
+            addWithEndOfLine( cncProgramString, "H004");
             addWithEndOfLine( cncProgramString, "M98 P0002");
 
-
+            addWithEndOfLine(cncProgramString, "");
+            addWithEndOfLine(cncProgramString, "(SNITT 5)");
             addWithEndOfLine( cncProgramString, "C902");
             cncProgramString.append(compensationSideString);
             addWithEndOfLine(cncProgramString, " H000");
@@ -204,9 +233,18 @@ public class TBCoder {
             cncProgramString.append(buildCoord(bottomChainSecondPoint, true, lastBottomPoint));
             cncProgramString.append(" : G01 ");
             addWithEndOfLine(cncProgramString, 
-                    buildCoord(topChainNextToLastPoint, true, lastTopPoint) );
+                    buildCoord(
+                            Util.distanceBetweenPoints(topChainSecondPoint, deltaTopToBottom),
+                            true,
+                            lastTopPoint
+                    ) 
+            );
             
+            addWithEndOfLine( cncProgramString, "H005");
+            addWithEndOfLine( cncProgramString, "M98 P0001");
 
+            addWithEndOfLine(cncProgramString, "");
+            addWithEndOfLine(cncProgramString, "(SNITT 6)");
             addWithEndOfLine( cncProgramString, "C903");
 
             cncProgramString.append(revCompensationSideString);
@@ -216,9 +254,14 @@ public class TBCoder {
             cncProgramString.append(buildCoord(bottomChainNextToLastPoint, true, lastBottomPoint));
             cncProgramString.append(" : G01 ");
             addWithEndOfLine(cncProgramString, 
-                    buildCoord(topChainNextToLastPoint, true, lastTopPoint) );
+                    buildCoord(
+                            Util.distanceBetweenPoints(topChainNextToLastPoint, deltaTopToBottom),
+                            true,
+                            lastTopPoint
+                    ) 
+            );
             
-            addWithEndOfLine( cncProgramString, "H002");
+            addWithEndOfLine( cncProgramString, "H006");
             addWithEndOfLine( cncProgramString, "M98 P0002");
 
         }
@@ -250,15 +293,16 @@ public class TBCoder {
         for (int i = 1; i <= topChain.getSize() - 2; i++) {
             geo = bottomChain.getEntity(i);
             if (geo.getGeometryType() == GeometryType.LINE) {
-                cncProgramString.append(buildMove(MoveType.g01));
-                addWithEndOfLine(cncProgramString, buildCoord(geo.getSecondPoint(), false, lastBottomPoint));
+                cncProgramString.append(buildMove(MoveType.g01, false));
+                cncProgramString.append( buildCoord(geo.getSecondPoint(), false, lastBottomPoint));
+                cncProgramString.append(" : ");
             }
             if (geo.getGeometryType() == GeometryType.ARC) {
                 SDCArc sdcArc = (SDCArc) geo;
                 if (sdcArc.getAngExt() < 0) { // cw arc
-                    cncProgramString.append(buildMove(MoveType.g02));
+                    cncProgramString.append(buildMove(MoveType.g02, false));
                 } else {
-                    cncProgramString.append(buildMove(MoveType.g03));
+                    cncProgramString.append(buildMove(MoveType.g03, false));
                 }
                 cncProgramString.append(buildCoord(sdcArc.getSecondPoint(), false, lastBottomPoint));
                 cncProgramString.append(" ");
@@ -267,7 +311,7 @@ public class TBCoder {
             }
             geo = topChain.getEntity(i);
             if (geo.getGeometryType() == GeometryType.LINE) {
-                cncProgramString.append(buildMove(MoveType.g01));
+                cncProgramString.append(buildMove(MoveType.g01, true));
                 addWithEndOfLine(cncProgramString,
                         buildCoord( 
                                 Util.distanceBetweenPoints(geo.getSecondPoint(), deltaTopToBottom),
@@ -277,9 +321,9 @@ public class TBCoder {
             if (geo.getGeometryType() == GeometryType.ARC) {
                 SDCArc sdcArc = (SDCArc) geo;
                 if (sdcArc.getAngExt() < 0) { // cw arc
-                    cncProgramString.append(buildMove(MoveType.g02));
+                    cncProgramString.append(buildMove(MoveType.g02, true));
                 } else {
-                    cncProgramString.append(buildMove(MoveType.g03));
+                    cncProgramString.append(buildMove(MoveType.g03, true));
                 }
                 cncProgramString.append(buildCoord(sdcArc.getSecondPoint(), false, lastTopPoint));
                 cncProgramString.append(" ");
@@ -328,9 +372,17 @@ public class TBCoder {
         return "I" + nForm(xDiff) + " J" + nForm(yDiff);
     }
 
-    private String buildMove(MoveType moveType) {
+    private String buildMove(MoveType moveType, boolean isTop) {
         String s = "";
-        if (moveType != lastMoveTypeTop) {
+        MoveType lastMoveType;
+        
+        if (isTop) {
+            lastMoveType = lastMoveTypeTop;
+        } else {
+            lastMoveType = lastMoveTypeBottom;
+        }
+        
+        if (moveType != lastMoveType) {
             switch (moveType) {
                 case g01:
                     s = "G01 ";
@@ -351,7 +403,12 @@ public class TBCoder {
                 default:
                     break;
             }
-            lastMoveTypeTop = moveType;
+            lastMoveType = moveType;
+        }
+        if ( isTop ) {
+            lastMoveTypeTop = lastMoveType;
+        } else {
+            lastMoveTypeBottom = lastMoveType;
         }
         return s;
     }
