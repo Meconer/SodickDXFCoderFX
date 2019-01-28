@@ -1,5 +1,6 @@
 package sodickdxfcoderui;
 
+import UtilPkg.SodickDxfCoderFXPreferences;
 import codingPkg.CodeTBDialogController;
 import codingPkg.CodeAngleDialogController;
 import UtilPkg.Util;
@@ -194,7 +195,9 @@ public class FXMLDocumentController implements Initializable {
         fc.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("DXF-filer", "*.dxf"));
         File initialDirectory = new File(SodickDxfCoderFXPreferences.getInstance().getDefaultDirectory());
-        fc.setInitialDirectory(initialDirectory);
+        if ( initialDirectory.exists() ) {
+            fc.setInitialDirectory(initialDirectory);
+        }
         File fileToOpen = fc.showOpenDialog(null);
         if (fileToOpen != null) {
             openDXFFile(fileToOpen);

@@ -18,9 +18,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
-import sodickdxfcoderui.SodickDxfCoderFXPreferences;
-import sodickdxfcoderui.SodickDxfCoderFXPreferences;
-import sodickdxfcoderui.SodickDxfCoderFXPreferences;
+import UtilPkg.SodickDxfCoderFXPreferences;
 
 /**
  *

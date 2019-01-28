@@ -72,7 +72,7 @@ public class SDCTransform {
     
     static SDCTransform buildScaleTransform(GeoExtents geoExtents, double viewPortWidth, double viewPortHeight) {
         // Get extra space from preferences
-        double extraSpaceInViewport = sodickdxfcoderui.SodickDxfCoderFXPreferences.getInstance().getExtraSpaceInViewport();
+        double extraSpaceInViewport = UtilPkg.SodickDxfCoderFXPreferences.getInstance().getExtraSpaceInViewport();
         
         // Find out how much space needed in x and y
         double viewPortHeightInModelSpace = geoExtents.getHeightWithOriginIncluded() * extraSpaceInViewport;

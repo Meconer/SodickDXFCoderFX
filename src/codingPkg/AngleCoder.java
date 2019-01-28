@@ -35,18 +35,18 @@ public class AngleCoder {
     public enum LeanSide {
         leanLeft, leanRight
     }
-    private LeanSide leanSide;
+    private final LeanSide leanSide;
 
     public enum MoveType {
-        g00, g01, g02, g03
+        g00, g01, g02, g03, none
     }
     private MoveType lastMoveType;
     
-    private String zLevelProgramString;
-    private String zLevelLowerString;
-    private String leanAngleString;
+    private final String zLevelProgramString;
+    private final String zLevelLowerString;
+    private final String leanAngleString;
 
-    private boolean useM199;
+    private final boolean useM199;
 
     private Point2D.Double chainNextToLastPoint;
     private Point2D.Double chainSecondPoint;
@@ -100,14 +100,16 @@ public class AngleCoder {
         addWithEndOfLine(cncProgramString, zLevelProgramString);
         cncProgramString.append( "TN"  );
         addWithEndOfLine(cncProgramString, zLevelLowerString );
+        addWithEndOfLine(cncProgramString, "G55");
+        addWithEndOfLine(cncProgramString, "G90");
 
         cncProgramString.append("G92 ");
         cncProgramString.append( buildCoord(chainStartPoint, true) );
-        cncProgramString.append(" Z0;\n");
-        cncProgramString.append("G29\n");
-        cncProgramString.append("T94\n");
-        cncProgramString.append("T84\n");
-        cncProgramString.append("C000\n");
+        addWithEndOfLine(cncProgramString," Z0");
+        addWithEndOfLine(cncProgramString,"G29");
+        addWithEndOfLine(cncProgramString,"T94");
+        addWithEndOfLine(cncProgramString,"T84");
+        addWithEndOfLine(cncProgramString,"C000");
 
         String compensationSideString = "G40";
         String revCompensationSideString = "G40";
@@ -162,8 +164,11 @@ public class AngleCoder {
             cncProgramString.append(angularDirString);
             cncProgramString.append(" A0 ");
             cncProgramString.append(compensationSideString);
-            cncProgramString.append(" ");
+            cncProgramString.append(" H000 G01 ");
             addWithEndOfLine( cncProgramString, buildCoord(chainSecondPoint, true));
+
+            cncProgramString.append("A");
+            addWithEndOfLine( cncProgramString, leanAngleString );
 
             addWithEndOfLine( cncProgramString, "H003");
             addWithEndOfLine( cncProgramString, "M98 P0001");
@@ -172,8 +177,11 @@ public class AngleCoder {
             cncProgramString.append(angularRevDirString);
             cncProgramString.append(" A0 ");
             cncProgramString.append(revCompensationSideString);
-            cncProgramString.append(" ");
+            cncProgramString.append(" H000 G01 ");
             addWithEndOfLine( cncProgramString, buildCoord(chainNextToLastPoint, true));
+
+            cncProgramString.append("A");
+            addWithEndOfLine( cncProgramString, leanAngleString );
 
             addWithEndOfLine( cncProgramString, "H004");
             addWithEndOfLine( cncProgramString, "M98 P0002");
@@ -182,8 +190,11 @@ public class AngleCoder {
             cncProgramString.append(angularDirString);
             cncProgramString.append(" A0 ");
             cncProgramString.append(compensationSideString);
-            cncProgramString.append(" ");
+            cncProgramString.append(" H000 G01 ");
             addWithEndOfLine( cncProgramString, buildCoord(chainSecondPoint, true));
+
+            cncProgramString.append("A");
+            addWithEndOfLine( cncProgramString, leanAngleString );
 
             addWithEndOfLine( cncProgramString, "H005");
             addWithEndOfLine( cncProgramString, "M98 P0001");
@@ -193,8 +204,11 @@ public class AngleCoder {
             cncProgramString.append(angularRevDirString);
             cncProgramString.append(" A0 ");
             cncProgramString.append(revCompensationSideString);
-            cncProgramString.append(" ");
+            cncProgramString.append(" H000 G01 ");
             addWithEndOfLine( cncProgramString, buildCoord(chainNextToLastPoint, true));
+
+            cncProgramString.append("A");
+            addWithEndOfLine( cncProgramString, leanAngleString );
 
             addWithEndOfLine( cncProgramString, "H006");
             addWithEndOfLine( cncProgramString, "M98 P0002");
@@ -215,7 +229,7 @@ public class AngleCoder {
 
     private void addSubSection(StringBuilder cncProgramString, String subName, Chain chainToCode) {
         SDCGeometricEntity geo;
-        lastMoveType = MoveType.g01;
+        lastMoveType = MoveType.none;
         lastX = -99999.88;
         lastY = -99999.88;
         addWithEndOfLine(cncProgramString, "");
@@ -237,13 +251,18 @@ public class AngleCoder {
                 cncProgramString.append(" ");
                 addWithEndOfLine(cncProgramString, buildIJ(sdcArc));
             }
+            if ( i == 1 ) {
+                cncProgramString.append("A");
+                addWithEndOfLine( cncProgramString, leanAngleString );
+            }
         }
         geo = chainToCode.getEntity(chainToCode.getSize() - 1);
         if (geo.getGeometryType() != GeometryType.LINE) {
             reportError("Måste avslutas med linje");
         }
+        addWithEndOfLine(cncProgramString, "A0");
         cncProgramString.append(buildMove(MoveType.g01));
-        cncProgramString.append("G40 H000 ");
+        cncProgramString.append("G50 G40 H000 ");
         addWithEndOfLine(cncProgramString, buildCoord(geo.getSecondPoint(), false));
         addWithEndOfLine(cncProgramString, "M99");
     }

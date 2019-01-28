@@ -12,7 +12,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
-import sodickdxfcoderui.SodickDxfCoderFXPreferences;
 
 /**
  *
